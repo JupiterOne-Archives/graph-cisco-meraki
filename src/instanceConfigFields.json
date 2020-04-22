@@ -1,0 +1,6 @@
+{
+  "apiKey": {
+    "type": "string",
+    "mask": true
+  }
+}
