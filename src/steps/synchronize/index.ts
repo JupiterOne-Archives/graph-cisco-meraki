@@ -1,6 +1,7 @@
 import {
   IntegrationStep,
   IntegrationStepExecutionContext,
+  createIntegrationRelationship,
 } from '@jupiterone/integration-sdk';
 
 import { createServicesClient } from '../../collector';
@@ -26,16 +27,37 @@ const step: IntegrationStep = {
     const client = createServicesClient(instance);
 
     const orgs = await client.getOrganizations();
-    await jobState.addEntities(orgs.map(convertOrganization));
+    const orgEntities = orgs.map(convertOrganization);
+    await jobState.addEntities(orgEntities);
 
-    for (const org of orgs) {
+    for (const org of orgEntities) {
       const networks = await client.getNetworks(org.id);
-      await jobState.addEntities(networks.map(convertNetwork));
+      const networkEntities = networks.map(convertNetwork);
+      await jobState.addEntities(networkEntities);
 
-      for (const network of networks) {
+      const orgNetworkRelationships = networkEntities.map((net) =>
+        createIntegrationRelationship({
+          from: org,
+          to: net,
+          _class: 'HAS',
+        }),
+      );
+      await jobState.addRelationships(orgNetworkRelationships);
+
+      for (const network of networkEntities) {
         if (network.id.startsWith('L_')) {
           const vlans = await client.getVlans(network.id);
-          await jobState.addEntities(vlans.map(convertVlan));
+          const vlanEntities = vlans.map(convertVlan);
+          await jobState.addEntities(vlanEntities);
+
+          const networkVlanRelationships = vlanEntities.map((vlan) =>
+            createIntegrationRelationship({
+              from: network,
+              to: vlan,
+              _class: 'HAS',
+            }),
+          );
+          await jobState.addRelationships(networkVlanRelationships);
         }
       }
     }
