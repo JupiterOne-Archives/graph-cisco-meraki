@@ -153,7 +153,7 @@ export const convertDevice = (
           'meraki_device',
           `${data.networkId}:${data.mac || data.serial}`,
         ),
-        _type: 'meraki_vlan',
+        _type: 'meraki_device',
         _class: ['Host', 'Device'],
         category: 'network',
         make: 'Cisco Meraki',
