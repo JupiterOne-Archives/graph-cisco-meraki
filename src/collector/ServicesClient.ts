@@ -7,6 +7,7 @@ import {
   MerakiAdminUser,
   MerakiDevice,
   MerakiSamlRole,
+  MerakiSSID,
 } from '.';
 
 interface ServicesClientInput {
@@ -87,5 +88,14 @@ export class ServicesClient {
     );
     const res: object[] = await getNetworkDevices(networkId);
     return res[0] as MerakiDevice[];
+  }
+
+  /**
+   * Get SSIDs of a Wireless Network
+   */
+  async getSSIDs(networkId: string): Promise<MerakiSSID[]> {
+    const getNetworkSSIDs = promisfy(meraki.SsidsController.getNetwork_ssids);
+    const res: object[] = await getNetworkSSIDs(networkId);
+    return res[0] as MerakiSSID[];
   }
 }

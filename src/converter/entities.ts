@@ -5,6 +5,7 @@ import {
   MerakiAdminUser,
   MerakiDevice,
   MerakiSamlRole,
+  MerakiSSID,
 } from '../collector';
 import {
   createIntegrationEntity,
@@ -84,6 +85,34 @@ export const convertNetwork = (
         displayName: data.name,
         organizationId: data.organizationId,
         timeZone: data.timeZone,
+        type: data.type,
+      },
+    },
+  });
+
+export const convertSSID = (
+  data: MerakiSSID,
+  networkId: string,
+): ReturnType<typeof createIntegrationEntity> =>
+  createIntegrationEntity({
+    entityData: {
+      source: data,
+      assign: {
+        ...convertProperties(data),
+        _key: createEntityKey(
+          'meraki_wifi',
+          `${networkId}:${data.number}:${data.name}`,
+        ),
+        _type: 'meraki_wifi',
+        _class: 'Network',
+        name: data.name,
+        displayName: data.name,
+        type: 'wireless',
+        encrypted: !!data.encryptionMode,
+        public: data.authMode === 'open',
+        internal: data.authMode !== 'open',
+        guest: !!data.name.match(/guest/i),
+        CIDR: '255.255.255.255', // CIDR is required by data model
       },
     },
   });
@@ -100,6 +129,7 @@ export const convertVlan = (
         _type: 'meraki_vlan',
         _class: 'Network',
         id: `${data.networkId}:${data.id}`,
+        vlanId: data.id,
         name: data.name,
         displayName: data.name,
         CIDR: data.subnet,

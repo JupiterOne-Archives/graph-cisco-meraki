@@ -12,16 +12,20 @@ import {
   convertAdminUser,
   convertDevice,
   convertSamlRole,
+  convertSSID,
 } from '../../converter';
 
 const step: IntegrationStep = {
   id: 'synchronize',
-  name: 'Fetch Meraki Organizations, Networks, and Devices',
+  name: 'Fetch Meraki Organizations, Users, Networks, and Devices',
   types: [
     'meraki_organization',
+    'meraki_admin',
+    'meraki_saml_role',
     'meraki_network',
     'meraki_device',
     'meraki_vlan',
+    'meraki_wifi',
   ],
   async executionHandler({
     instance,
@@ -74,6 +78,29 @@ const step: IntegrationStep = {
             }),
           );
           await jobState.addRelationships(networkVlanRelationships);
+        }
+
+        if (network.type === 'wireless') {
+          const ssids = await client.getSSIDs(network.id);
+          const ssidEntities = [];
+          ssids.forEach((ssid) => {
+            if (!ssid.name.startsWith('Unconfigured')) {
+              ssid.psk = 'REDACTED';
+              const entity = convertSSID(ssid, network.id);
+              delete entity.CIDR; // deletes '255.255.255.255' placeholder CIDR
+              ssidEntities.push(entity);
+            }
+          });
+          await jobState.addEntities(ssidEntities);
+
+          const networkSSIDRelationships = ssidEntities.map((ssid) =>
+            createIntegrationRelationship({
+              from: network,
+              to: ssid,
+              _class: 'HAS',
+            }),
+          );
+          await jobState.addRelationships(networkSSIDRelationships);
         }
       }
 
