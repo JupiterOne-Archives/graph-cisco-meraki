@@ -4,7 +4,9 @@
   "description": "A graph conversion tool for https://meraki.cisco.com",
   "license": "MPL-2.0",
   "scripts": {
-    "start": "j1-integration collect",
+    "collect": "j1-integration collect",
+    "graph": "j1-integration visualize",
+    "start": "yarn collect; yarn graph",
     "lint": "eslint . --cache --fix --ext .ts,.tsx",
     "format": "prettier --write '**/*.{ts,js,json,css,md,yml}'",
     "type-check": "tsc --noEmit",
