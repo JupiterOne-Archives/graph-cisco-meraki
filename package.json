@@ -16,7 +16,7 @@
     "build": "tsc -p tsconfig.dist.json --declaration"
   },
   "dependencies": {
-    "@jupiterone/integration-sdk": "^0.8.1",
+    "@jupiterone/integration-sdk": "^0.10.0",
     "@lifeomic/attempt": "^3.0.0",
     "meraki": "^1.5.0",
     "node-fetch": "^2.6.0",

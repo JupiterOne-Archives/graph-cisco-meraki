@@ -1,6 +1,13 @@
 import meraki = require('meraki');
 import { promisfy } from 'promisfy';
-import { MerakiOrganization, MerakiNetwork, MerakiVlan } from '.';
+import {
+  MerakiOrganization,
+  MerakiNetwork,
+  MerakiVlan,
+  MerakiAdminUser,
+  MerakiDevice,
+  MerakiSamlRole,
+} from '.';
 
 interface ServicesClientInput {
   apiKey: string;
@@ -28,7 +35,29 @@ export class ServicesClient {
   }
 
   /**
-   * Get Networks
+   * Get Admin Users of an Organization
+   */
+  async getAdmins(organizationId: string): Promise<MerakiAdminUser[]> {
+    const getOrganizationAdmins = promisfy(
+      meraki.AdminsController.getOrganizationAdmins,
+    );
+    const res: object[] = await getOrganizationAdmins(organizationId);
+    return res[0] as MerakiAdminUser[];
+  }
+
+  /**
+   * Get SAML Roles of an Organization
+   */
+  async getSamlRoles(organizationId: string): Promise<MerakiSamlRole[]> {
+    const getOrganizationSamlRoles = promisfy(
+      meraki.SAMLRolesController.getOrganizationSamlRoles,
+    );
+    const res: object[] = await getOrganizationSamlRoles(organizationId);
+    return res[0] as MerakiSamlRole[];
+  }
+
+  /**
+   * Get Networks of an Organization
    */
   async getNetworks(organizationId: string): Promise<MerakiNetwork[]> {
     const getOrganizationNetworks = promisfy(
@@ -41,11 +70,22 @@ export class ServicesClient {
   }
 
   /**
-   * Get VLANs
+   * Get VLANs in a Network
    */
   async getVlans(networkId: string): Promise<MerakiVlan[]> {
     const getNetworkVlans = promisfy(meraki.VlansController.getNetwork_vlans);
     const res: object[] = await getNetworkVlans(networkId);
     return res[0] as MerakiVlan[];
+  }
+
+  /**
+   * Get Devices in a Network
+   */
+  async getDevices(networkId: string): Promise<MerakiDevice[]> {
+    const getNetworkDevices = promisfy(
+      meraki.DevicesController.getNetworkDevices,
+    );
+    const res: object[] = await getNetworkDevices(networkId);
+    return res[0] as MerakiDevice[];
   }
 }

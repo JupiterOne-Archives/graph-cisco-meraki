@@ -1,7 +1,15 @@
-import { MerakiOrganization, MerakiNetwork, MerakiVlan } from '../collector';
+import {
+  MerakiOrganization,
+  MerakiNetwork,
+  MerakiVlan,
+  MerakiAdminUser,
+  MerakiDevice,
+  MerakiSamlRole,
+} from '../collector';
 import {
   createIntegrationEntity,
   convertProperties,
+  getTime,
 } from '@jupiterone/integration-sdk';
 import createEntityKey from './utils/createEntityKey';
 
@@ -19,6 +27,44 @@ export const convertOrganization = (
         name: data.name,
         displayName: data.name,
         url: data.url,
+      },
+    },
+  });
+
+export const convertAdminUser = (
+  data: MerakiAdminUser,
+): ReturnType<typeof createIntegrationEntity> =>
+  createIntegrationEntity({
+    entityData: {
+      source: data,
+      assign: {
+        ...convertProperties(data),
+        _key: createEntityKey('meraki_admin', data.id),
+        _type: 'meraki_admin',
+        _class: 'User',
+        name: data.name,
+        displayName: data.name,
+        admin: true,
+        mfaEnabled: data.twoFactorAuthEnabled,
+        lastActive: getTime(data.lastActive),
+        username: data.email,
+      },
+    },
+  });
+
+export const convertSamlRole = (
+  data: MerakiSamlRole,
+): ReturnType<typeof createIntegrationEntity> =>
+  createIntegrationEntity({
+    entityData: {
+      source: data,
+      assign: {
+        ...convertProperties(data),
+        _key: createEntityKey('meraki_saml_role', data.id),
+        _type: 'meraki_saml_role',
+        _class: 'AccessRole',
+        name: data.role,
+        displayName: data.role,
       },
     },
   });
@@ -61,6 +107,32 @@ export const convertVlan = (
         internal: true,
         public: !!data.name.match(/dmz|public/i),
         wireless: !!data.name.match(/wireless|wifi/i),
+      },
+    },
+  });
+
+export const convertDevice = (
+  data: MerakiDevice,
+): ReturnType<typeof createIntegrationEntity> =>
+  createIntegrationEntity({
+    entityData: {
+      source: data,
+      assign: {
+        ...convertProperties(data),
+        _key: createEntityKey(
+          'meraki_device',
+          `${data.networkId}:${data.mac || data.serial}`,
+        ),
+        _type: 'meraki_vlan',
+        _class: ['Host', 'Device'],
+        category: 'network',
+        make: 'Cisco Meraki',
+        name: data.name,
+        displayName: data.name,
+        hostname: data.name,
+        ipAddress: data.lanIp,
+        privateIp: data.lanIp,
+        privateIpAddress: data.lanIp,
       },
     },
   });

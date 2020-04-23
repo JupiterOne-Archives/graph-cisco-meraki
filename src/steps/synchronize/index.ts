@@ -9,6 +9,9 @@ import {
   convertOrganization,
   convertNetwork,
   convertVlan,
+  convertAdminUser,
+  convertDevice,
+  convertSamlRole,
 } from '../../converter';
 
 const step: IntegrationStep = {
@@ -45,6 +48,19 @@ const step: IntegrationStep = {
       await jobState.addRelationships(orgNetworkRelationships);
 
       for (const network of networkEntities) {
+        const devices = await client.getDevices(network.id);
+        const deviceEntities = devices.map(convertDevice);
+        await jobState.addEntities(deviceEntities);
+
+        const networkDeviceRelationships = deviceEntities.map((device) =>
+          createIntegrationRelationship({
+            from: network,
+            to: device,
+            _class: 'HAS',
+          }),
+        );
+        await jobState.addRelationships(networkDeviceRelationships);
+
         if (network.id.startsWith('L_')) {
           const vlans = await client.getVlans(network.id);
           const vlanEntities = vlans.map(convertVlan);
@@ -60,6 +76,32 @@ const step: IntegrationStep = {
           await jobState.addRelationships(networkVlanRelationships);
         }
       }
+
+      const admins = await client.getAdmins(org.id);
+      const adminEntities = admins.map(convertAdminUser);
+      await jobState.addEntities(adminEntities);
+
+      const orgAdminRelationships = adminEntities.map((admin) =>
+        createIntegrationRelationship({
+          from: org,
+          to: admin,
+          _class: 'HAS',
+        }),
+      );
+      await jobState.addRelationships(orgAdminRelationships);
+
+      const samlRoles = await client.getSamlRoles(org.id);
+      const samlRolesEntities = samlRoles.map(convertSamlRole);
+      await jobState.addEntities(samlRolesEntities);
+
+      const orgSamlRoleRelationships = samlRolesEntities.map((role) =>
+        createIntegrationRelationship({
+          from: org,
+          to: role,
+          _class: 'HAS',
+        }),
+      );
+      await jobState.addRelationships(orgSamlRoleRelationships);
     }
   },
 };
