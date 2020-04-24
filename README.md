@@ -23,14 +23,11 @@ Create a `.env` file at the root of this project and add environment variables
 to match what is in `src/instanceConfigFields.json`. The `.env` file is ignored
 by git, so you won't have to worry about accidentally pushing credentials.
 
-Given this example configuration:
+Configuration:
 
 ```json
 {
-  "clientId": {
-    "type": "string"
-  },
-  "clientSecret": {
+  "apiKey": {
     "type": "string",
     "mask": true
   }
@@ -40,8 +37,7 @@ Given this example configuration:
 You would provide a `.env` file like this:
 
 ```bash
-CLIENT_ID="client-id"
-CLIENT_SECRET="supersecret"
+API_KEY=<key>
 ```
 
 The snake cased environment variables will automatically be converted and
