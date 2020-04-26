@@ -135,6 +135,7 @@ export const convertVlan = (
         CIDR: data.subnet,
         defaultGateway: data.applianceIp,
         internal: true,
+        dmz: !!data.name.match(/dmz/i),
         public: !!data.name.match(/dmz|public/i),
         wireless: !!data.name.match(/wireless|wifi/i),
       },
