@@ -6,6 +6,9 @@
   "files": [
     "dist"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "collect": "j1-integration collect",
     "graph": "j1-integration visualize",
