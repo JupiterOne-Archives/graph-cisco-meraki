@@ -3,6 +3,7 @@
   "version": "0.2.0",
   "description": "A graph conversion tool for https://meraki.cisco.com",
   "license": "MPL-2.0",
+  "files": ["dist"],
   "scripts": {
     "collect": "j1-integration collect",
     "graph": "j1-integration visualize",
@@ -13,10 +14,11 @@
     "test": "jest --passWithNoTests",
     "test:ci": "yarn lint && yarn type-check && yarn test",
     "prebuild": "yarn test:ci",
-    "build": "tsc -p tsconfig.dist.json --declaration"
+    "build": "tsc -p tsconfig.dist.json --declaration",
+    "prepublishOnly": "yarn build"
   },
   "dependencies": {
-    "@jupiterone/integration-sdk": "^0.10.0",
+    "@jupiterone/integration-sdk": "^0.15.0",
     "@lifeomic/attempt": "^3.0.0",
     "meraki": "^1.5.0",
     "node-fetch": "^2.6.0",
