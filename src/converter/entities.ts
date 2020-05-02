@@ -14,6 +14,22 @@ import {
 } from '@jupiterone/integration-sdk';
 import createEntityKey from './utils/createEntityKey';
 
+export const convertAccount = (
+  data: MerakiOrganization,
+): ReturnType<typeof createIntegrationEntity> =>
+  createIntegrationEntity({
+    entityData: {
+      source: data,
+      assign: {
+        _key: createEntityKey('cisco_meraki_account', data.name),
+        _type: 'cisco_meraki_account',
+        _class: 'Account',
+        name: data.name,
+        displayName: `${data.name} Cisco Meraki Dashboard`,
+      },
+    },
+  });
+
 export const convertOrganization = (
   data: MerakiOrganization,
 ): ReturnType<typeof createIntegrationEntity> =>
