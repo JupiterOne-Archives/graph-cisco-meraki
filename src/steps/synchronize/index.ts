@@ -13,6 +13,7 @@ import {
   convertDevice,
   convertSamlRole,
   convertSSID,
+  convertAccount,
 } from '../../converter';
 
 const step: IntegrationStep = {
@@ -37,7 +38,19 @@ const step: IntegrationStep = {
     const orgEntities = orgs.map(convertOrganization);
     await jobState.addEntities(orgEntities);
 
+    const accountEntity = convertAccount(orgs[0]);
+    const accountOrgRelationships = [];
+    await jobState.addEntities([accountEntity]);
+
     for (const org of orgEntities) {
+      accountOrgRelationships.push(
+        createIntegrationRelationship({
+          from: accountEntity,
+          to: org,
+          _class: 'HAS',
+        }),
+      );
+
       const networks = await client.getNetworks(org.id);
       const networkEntities = networks.map(convertNetwork);
       await jobState.addEntities(networkEntities);
@@ -130,6 +143,8 @@ const step: IntegrationStep = {
       );
       await jobState.addRelationships(orgSamlRoleRelationships);
     }
+
+    await jobState.addRelationships(accountOrgRelationships);
   },
 };
 
