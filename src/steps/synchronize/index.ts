@@ -27,6 +27,12 @@ const step: IntegrationStep = {
     'meraki_device',
     'meraki_vlan',
     'meraki_wifi',
+    'cisco_meraki_account_has_meraki_organization',
+    'meraki_organization_has_admin',
+    'meraki_organization_has_saml_role',
+    'meraki_organization_has_network',
+    'meraki_network_has_device',
+    'meraki_network_has_vlan',
   ],
   async executionHandler({
     instance,
