@@ -63,7 +63,7 @@ export const convertAdminUser = (
         displayName: data.name,
         admin: true,
         mfaEnabled: data.twoFactorAuthEnabled,
-        lastActive: getTime(data.lastActive),
+        lastActive: getTime(data.lastActive && data.lastActive * 1000),
         username: data.email,
       },
     },
