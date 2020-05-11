@@ -177,9 +177,9 @@ export const convertDevice = (
         name: data.name,
         displayName: data.name,
         hostname: data.name,
-        ipAddress: data.lanIp,
-        privateIp: data.lanIp,
-        privateIpAddress: data.lanIp,
+        ipAddress: data.lanIp ? data.lanIp : undefined,
+        privateIp: data.lanIp ? data.lanIp : undefined,
+        privateIpAddress: data.lanIp ? data.lanIp : undefined,
       },
     },
   });
