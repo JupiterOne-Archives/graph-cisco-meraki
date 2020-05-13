@@ -6,6 +6,8 @@
   "files": [
     "dist"
   ],
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "publishConfig": {
     "access": "public"
   },
@@ -20,10 +22,10 @@
     "test:ci": "yarn lint && yarn type-check && yarn test",
     "prebuild": "yarn test:ci",
     "build": "tsc -p tsconfig.dist.json --declaration",
-    "prepublishOnly": "yarn build"
+    "prepack": "yarn build"
   },
   "dependencies": {
-    "@jupiterone/integration-sdk": "^0.17.0",
+    "@jupiterone/integration-sdk": "^1.0.0",
     "@lifeomic/attempt": "^3.0.0",
     "meraki": "^1.5.0",
     "node-fetch": "^2.6.0",
