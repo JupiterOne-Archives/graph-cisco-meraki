@@ -4,7 +4,7 @@ import validateInvocation from '../validateInvocation';
 
 test('rejects if apiKey is not present', async () => {
   const context = createMockExecutionContext();
-  context.instance.config.apiKey = undefined;
+  context.instance.config['apiKey'] = undefined;
 
   await expect(validateInvocation(context)).rejects.toThrow(
     /Failed to authenticate/,

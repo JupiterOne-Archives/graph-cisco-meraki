@@ -10,7 +10,7 @@ import {
   MerakiSSID,
 } from '.';
 
-interface ServicesClientInput {
+export interface ServicesClientInput {
   apiKey: string;
 }
 
