@@ -5,6 +5,7 @@ import {
   MerakiNetwork,
   MerakiVlan,
   MerakiAdminUser,
+  MerakiClient,
   MerakiDevice,
   MerakiSamlRole,
   MerakiSSID,
@@ -88,6 +89,17 @@ export class ServicesClient {
     );
     const res: object[] = await getNetworkDevices(networkId);
     return res[0] as MerakiDevice[];
+  }
+
+  /**
+   * Get Clients in a Network
+   */
+  async getClients(networkId: string): Promise<MerakiClient[]> {
+    const getNetworkClients = promisfy(
+      meraki.ClientsController.getNetworkClients,
+    );
+    const res: object[] = await getNetworkClients({ networkId });
+    return res[0] as MerakiClient[];
   }
 
   /**
