@@ -16,8 +16,10 @@ import {
   convertAccount,
 } from '../../converter';
 
+export const STEP_ID = 'fetch-resources';
+
 const step: IntegrationStep = {
-  id: 'synchronize',
+  id: STEP_ID,
   name: 'Fetch Meraki Organizations, Users, Networks, and Devices',
   types: [
     'meraki_organization',

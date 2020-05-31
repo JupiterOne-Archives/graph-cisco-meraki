@@ -2,7 +2,7 @@ function createApiKeyEntityIdentifier(
   type: string,
   id: number | string,
 ): string {
-  return `${type}:${id}`;
+  return `${type.replace(/_/g, '-')}:${id}`;
 }
 
 export default createApiKeyEntityIdentifier;
