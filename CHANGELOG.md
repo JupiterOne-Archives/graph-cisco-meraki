@@ -8,6 +8,12 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 1.3.2 - 2020-06-01
+
+### Changed
+
+- Upgraded to `@jupiterone/integration-sdk@^3.1.0` to get TypeScript type fixes.
+
 ## 1.3.1 - 2020-06-01
 
 ### Fixed

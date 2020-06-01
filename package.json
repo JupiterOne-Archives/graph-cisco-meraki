@@ -1,6 +1,6 @@
 {
   "name": "@jupiterone/graph-cisco-meraki",
-  "version": "1.3.1",
+  "version": "1.3.2",
   "description": "A graph conversion tool for https://meraki.cisco.com",
   "license": "MPL-2.0",
   "files": [
