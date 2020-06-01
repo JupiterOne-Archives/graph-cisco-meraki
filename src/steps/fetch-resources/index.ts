@@ -1,19 +1,21 @@
+import { IntegrationConfig } from 'src/types';
+
 import {
+  createIntegrationRelationship,
   IntegrationStep,
   IntegrationStepExecutionContext,
-  createIntegrationRelationship,
 } from '@jupiterone/integration-sdk';
 
 import { createServicesClient } from '../../collector';
 import {
-  convertOrganization,
-  convertNetwork,
-  convertVlan,
+  convertAccount,
   convertAdminUser,
   convertDevice,
+  convertNetwork,
+  convertOrganization,
   convertSamlRole,
   convertSSID,
-  convertAccount,
+  convertVlan,
 } from '../../converter';
 
 export const STEP_ID = 'fetch-resources';
@@ -39,7 +41,7 @@ const step: IntegrationStep = {
   async executionHandler({
     instance,
     jobState,
-  }: IntegrationStepExecutionContext) {
+  }: IntegrationStepExecutionContext<IntegrationConfig>) {
     const client = createServicesClient(instance);
 
     const orgs = await client.getOrganizations();

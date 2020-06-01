@@ -4,9 +4,10 @@ import {
 } from '@jupiterone/integration-sdk';
 
 import { createServicesClient } from './collector';
+import { IntegrationConfig } from './types';
 
 export default async function validateInvocation(
-  context: IntegrationExecutionContext,
+  context: IntegrationExecutionContext<IntegrationConfig>,
 ): Promise<void> {
   context.logger.info(
     {
@@ -23,7 +24,7 @@ export default async function validateInvocation(
 }
 
 async function isConfigurationValid(
-  instance: IntegrationInstance,
+  instance: IntegrationInstance<IntegrationConfig>,
 ): Promise<boolean> {
   // perform test api call. This will fail if we do not have access.
   try {
