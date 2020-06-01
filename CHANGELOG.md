@@ -8,4 +8,15 @@ and this project adheres to
 
 ## [Unreleased]
 
-### Changed
+## 1.3.1 - 2020-06-01
+
+### Fixed
+
+- Define `IntegrationConfig` type and add as generic parameter as required.
+
+## 1.3.0 - 2020-05-31
+
+### Added
+
+- Use mapped relationships to connect network entities to clients discovered on
+  the network.
