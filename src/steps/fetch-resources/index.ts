@@ -1,4 +1,4 @@
-import { IntegrationConfig } from 'src/types';
+import { IntegrationConfig } from '../../types';
 
 import {
   createIntegrationRelationship,
