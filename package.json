@@ -32,7 +32,7 @@
     "promisfy": "^1.2.0"
   },
   "devDependencies": {
-    "@jupiterone/integration-sdk-cli": "^1.1.0",
+    "@jupiterone/integration-sdk-dev-tools": "^1.1.0",
     "@jupiterone/integration-sdk-testing": "^1.1.0",
     "@pollyjs/adapter-node-http": "^4.0.4",
     "@pollyjs/core": "^4.0.4",
