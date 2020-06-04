@@ -1,5 +1,5 @@
-import { convertNetworkClientRelationship } from 'src/converter';
-import { IntegrationConfig } from 'src/types';
+import { convertNetworkClientRelationship } from '../../converter';
+import { IntegrationConfig } from '../../types';
 
 import {
   IntegrationStep,
