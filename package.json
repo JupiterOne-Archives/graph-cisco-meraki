@@ -25,13 +25,15 @@
     "prepack": "yarn build"
   },
   "dependencies": {
-    "@jupiterone/integration-sdk": "^3.1.0",
+    "@jupiterone/integration-sdk-core": "^1.1.0",
     "@lifeomic/attempt": "^3.0.0",
     "meraki": "^1.5.0",
     "node-fetch": "^2.6.0",
     "promisfy": "^1.2.0"
   },
   "devDependencies": {
+    "@jupiterone/integration-sdk-cli": "^1.1.0",
+    "@jupiterone/integration-sdk-testing": "^1.1.0",
     "@pollyjs/adapter-node-http": "^4.0.4",
     "@pollyjs/core": "^4.0.4",
     "@pollyjs/persister-fs": "^4.0.4",

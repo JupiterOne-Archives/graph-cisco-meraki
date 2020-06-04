@@ -11,7 +11,7 @@ import {
   createIntegrationEntity,
   convertProperties,
   getTime,
-} from '@jupiterone/integration-sdk';
+} from '@jupiterone/integration-sdk-core';
 import createEntityKey from './utils/createEntityKey';
 
 export const convertAccount = (
