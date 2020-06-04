@@ -4,7 +4,7 @@ import { IntegrationConfig } from '../../types';
 import {
   IntegrationStep,
   IntegrationStepExecutionContext,
-} from '@jupiterone/integration-sdk';
+} from '@jupiterone/integration-sdk-core';
 
 import { createServicesClient } from '../../collector';
 import { STEP_ID as FETCH_RESOURCES_STEP } from '../fetch-resources';

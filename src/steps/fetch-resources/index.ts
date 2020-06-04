@@ -4,7 +4,7 @@ import {
   createIntegrationRelationship,
   IntegrationStep,
   IntegrationStepExecutionContext,
-} from '@jupiterone/integration-sdk';
+} from '@jupiterone/integration-sdk-core';
 
 import { createServicesClient } from '../../collector';
 import {
@@ -24,6 +24,7 @@ const step: IntegrationStep = {
   id: STEP_ID,
   name: 'Fetch Meraki Organizations, Users, Networks, and Devices',
   types: [
+    'cisco_meraki_account',
     'meraki_organization',
     'meraki_admin',
     'meraki_saml_role',
@@ -37,6 +38,7 @@ const step: IntegrationStep = {
     'meraki_organization_has_network',
     'meraki_network_has_device',
     'meraki_network_has_vlan',
+    'meraki_network_has_wifi',
   ],
   async executionHandler({
     instance,

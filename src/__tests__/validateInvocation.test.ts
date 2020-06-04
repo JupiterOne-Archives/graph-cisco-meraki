@@ -1,6 +1,6 @@
 import { IntegrationConfig } from '../types';
 
-import { createMockExecutionContext } from '@jupiterone/integration-sdk/testing';
+import { createMockExecutionContext } from '@jupiterone/integration-sdk-testing';
 
 import validateInvocation from '../validateInvocation';
 
