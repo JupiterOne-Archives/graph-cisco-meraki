@@ -2,11 +2,11 @@
 
 import { Opaque } from 'type-fest';
 
-export type MerakiOrganization = Opaque<any>;
-export type MerakiAdminUser = Opaque<any>;
-export type MerakiSamlRole = Opaque<any>;
-export type MerakiNetwork = Opaque<any>;
-export type MerakiClient = Opaque<any>;
-export type MerakiDevice = Opaque<any>;
-export type MerakiSSID = Opaque<any>;
-export type MerakiVlan = Opaque<any>;
+export type MerakiOrganization = Opaque<any, 'MerakiOrganization'>;
+export type MerakiAdminUser = Opaque<any, 'MerakiAdminUser'>;
+export type MerakiSamlRole = Opaque<any, 'MerakiSamlRole'>;
+export type MerakiNetwork = Opaque<any, 'MerakiNetwork'>;
+export type MerakiClient = Opaque<any, 'MerakiClient'>;
+export type MerakiDevice = Opaque<any, 'MerakiDevice'>;
+export type MerakiSSID = Opaque<any, 'MerakiSSID'>;
+export type MerakiVlan = Opaque<any, 'MerakiVlan'>;
