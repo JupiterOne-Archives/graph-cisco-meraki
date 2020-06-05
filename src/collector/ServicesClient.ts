@@ -29,7 +29,7 @@ export class ServicesClient {
    */
   async getOrganizations(): Promise<MerakiOrganization[]> {
     const res: object[] = await meraki.OrganizationsController.getOrganizations();
-    return res[0] as MerakiOrganization[];
+    return res as MerakiOrganization[];
   }
 
   /**
@@ -39,7 +39,7 @@ export class ServicesClient {
     const res: object[] = await meraki.AdminsController.getOrganizationAdmins(
       organizationId,
     );
-    return res[0] as MerakiAdminUser[];
+    return res as MerakiAdminUser[];
   }
 
   /**
@@ -49,7 +49,7 @@ export class ServicesClient {
     const res: object[] = await meraki.SAMLRolesController.getOrganizationSamlRoles(
       organizationId,
     );
-    return res[0] as MerakiSamlRole[];
+    return res as MerakiSamlRole[];
   }
 
   /**
@@ -61,7 +61,7 @@ export class ServicesClient {
         organizationId,
       },
     );
-    return res[0] as MerakiNetwork[];
+    return res as MerakiNetwork[];
   }
 
   /**
@@ -71,7 +71,7 @@ export class ServicesClient {
     const res: object[] = await meraki.VlansController.getNetwork_vlans(
       networkId,
     );
-    return res[0] as MerakiVlan[];
+    return res as MerakiVlan[];
   }
 
   /**
@@ -81,7 +81,7 @@ export class ServicesClient {
     const res: object[] = await meraki.DevicesController.getNetworkDevices(
       networkId,
     );
-    return res[0] as MerakiDevice[];
+    return res as MerakiDevice[];
   }
 
   /**
@@ -91,7 +91,7 @@ export class ServicesClient {
     const res: object[] = await meraki.ClientsController.getNetworkClients({
       networkId,
     });
-    return res[0] as MerakiClient[];
+    return res as MerakiClient[];
   }
 
   /**
@@ -101,6 +101,6 @@ export class ServicesClient {
     const res: object[] = await meraki.SsidsController.getNetwork_ssids(
       networkId,
     );
-    return res[0] as MerakiSSID[];
+    return res as MerakiSSID[];
   }
 }
