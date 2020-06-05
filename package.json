@@ -24,14 +24,17 @@
     "build": "tsc -p tsconfig.dist.json --declaration",
     "prepack": "yarn build"
   },
+  "peerDependencies": {
+    "@jupiterone/integration-sdk-core": "^1.1.0"
+  },
   "dependencies": {
-    "@jupiterone/integration-sdk-core": "^1.1.0",
     "@lifeomic/attempt": "^3.0.0",
     "meraki": "^1.5.0",
     "node-fetch": "^2.6.0",
     "promisfy": "^1.2.0"
   },
   "devDependencies": {
+    "@jupiterone/integration-sdk-core": "^1.1.0",
     "@jupiterone/integration-sdk-dev-tools": "^1.1.0",
     "@jupiterone/integration-sdk-testing": "^1.1.0",
     "@pollyjs/adapter-node-http": "^4.0.4",
