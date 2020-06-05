@@ -30,8 +30,7 @@
   "dependencies": {
     "@lifeomic/attempt": "^3.0.0",
     "meraki": "^1.5.0",
-    "node-fetch": "^2.6.0",
-    "promisfy": "^1.2.0"
+    "node-fetch": "^2.6.0"
   },
   "devDependencies": {
     "@jupiterone/integration-sdk-core": "^1.1.0",
