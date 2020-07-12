@@ -1,27 +1,32 @@
+import { IntegrationConfig } from '../../types';
+
 import {
+  createIntegrationRelationship,
   IntegrationStep,
   IntegrationStepExecutionContext,
-  createIntegrationRelationship,
   RelationshipDirection,
-} from '@jupiterone/integration-sdk';
+} from '@jupiterone/integration-sdk-core';
 
 import { createServicesClient } from '../../collector';
 import {
-  convertOrganization,
-  convertNetwork,
-  convertVlan,
+  convertAccount,
   convertAdminUser,
   convertDevice,
+  convertNetwork,
+  convertOrganization,
   convertSamlRole,
   convertSSID,
-  convertAccount,
   INTERNET_ENTITY,
+  convertVlan,
 } from '../../converter';
 
+export const STEP_ID = 'fetch-resources';
+
 const step: IntegrationStep = {
-  id: 'synchronize',
+  id: STEP_ID,
   name: 'Fetch Meraki Organizations, Users, Networks, and Devices',
   types: [
+    'cisco_meraki_account',
     'meraki_organization',
     'meraki_admin',
     'meraki_saml_role',
@@ -35,12 +40,13 @@ const step: IntegrationStep = {
     'meraki_organization_has_network',
     'meraki_network_has_device',
     'meraki_network_has_vlan',
+    'meraki_network_has_wifi',
     'meraki_device_connects_internet',
   ],
   async executionHandler({
     instance,
     jobState,
-  }: IntegrationStepExecutionContext) {
+  }: IntegrationStepExecutionContext<IntegrationConfig>) {
     const client = createServicesClient(instance);
 
     const orgs = await client.getOrganizations();

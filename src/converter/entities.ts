@@ -11,7 +11,7 @@ import {
   createIntegrationEntity,
   convertProperties,
   getTime,
-} from '@jupiterone/integration-sdk';
+} from '@jupiterone/integration-sdk-core';
 import createEntityKey from './utils/createEntityKey';
 
 export const convertAccount = (
@@ -177,6 +177,7 @@ export const convertDevice = (
         name: data.name,
         displayName: data.name,
         hostname: data.name,
+        macAddress: data.mac,
         ipAddress: data.lanIp ? data.lanIp : undefined,
         privateIp: data.lanIp ? data.lanIp : undefined,
         privateIpAddress: data.lanIp ? data.lanIp : undefined,

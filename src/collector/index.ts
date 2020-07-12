@@ -1,5 +1,8 @@
-import { IntegrationInstance } from '@jupiterone/integration-sdk';
-import { ServicesClient, ServicesClientInput } from './ServicesClient';
+import { IntegrationConfig } from '../types';
+
+import { IntegrationInstance } from '@jupiterone/integration-sdk-core';
+
+import { ServicesClient } from './ServicesClient';
 
 export * from './types';
 
@@ -8,9 +11,9 @@ export * from './types';
  * api key.
  */
 export function createServicesClient(
-  instance: IntegrationInstance,
+  instance: IntegrationInstance<IntegrationConfig>,
 ): ServicesClient {
-  const apiKey = (instance.config as ServicesClientInput).apiKey;
+  const apiKey = instance.config.apiKey;
 
   if (!apiKey) {
     throw new Error(
