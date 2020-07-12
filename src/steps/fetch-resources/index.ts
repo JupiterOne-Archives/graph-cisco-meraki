@@ -4,6 +4,7 @@ import {
   createIntegrationRelationship,
   IntegrationStep,
   IntegrationStepExecutionContext,
+  RelationshipDirection,
 } from '@jupiterone/integration-sdk-core';
 
 import { createServicesClient } from '../../collector';
@@ -15,6 +16,7 @@ import {
   convertOrganization,
   convertSamlRole,
   convertSSID,
+  INTERNET_ENTITY,
   convertVlan,
 } from '../../converter';
 
@@ -39,6 +41,7 @@ const step: IntegrationStep = {
     'meraki_network_has_device',
     'meraki_network_has_vlan',
     'meraki_network_has_wifi',
+    'meraki_device_connects_internet',
   ],
   async executionHandler({
     instance,
@@ -89,6 +92,25 @@ const step: IntegrationStep = {
           }),
         );
         await jobState.addRelationships(networkDeviceRelationships);
+
+        const internetDeviceRelationships = [];
+        deviceEntities.forEach((device) => {
+          if (device.publicIp) {
+            internetDeviceRelationships.push(
+              createIntegrationRelationship({
+                _class: 'CONNECTS',
+                _type: 'meraki_device_connects_internet',
+                _mapping: {
+                  relationshipDirection: RelationshipDirection.FORWARD,
+                  sourceEntityKey: device._key,
+                  targetFilterKeys: [['_type', 'CIDR']],
+                  targetEntity: INTERNET_ENTITY,
+                },
+              }),
+            );
+          }
+        });
+        await jobState.addRelationships(internetDeviceRelationships);
 
         if (network.id.startsWith('L_')) {
           const vlans = await client.getVlans(network.id);
