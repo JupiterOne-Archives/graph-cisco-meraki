@@ -180,6 +180,31 @@ export const convertDevice = (
         ipAddress: data.lanIp ? data.lanIp : undefined,
         privateIp: data.lanIp ? data.lanIp : undefined,
         privateIpAddress: data.lanIp ? data.lanIp : undefined,
+        publicIp: getPublicIp(data),
+        publicIpAddress: getPublicIp(data),
       },
     },
   });
+
+export const INTERNET_ENTITY = {
+  _class: ['Internet', 'Network'],
+  _type: 'internet',
+  displayName: 'Internet',
+  CIDR: '0.0.0.0/0',
+  CIDRv6: '::/0',
+  public: true,
+  trusted: false,
+};
+
+function getPublicIp(data: MerakiDevice): string | undefined {
+  if (data.wanIp) {
+    return data.wanIp;
+  }
+  if (data.wan1Ip) {
+    return data.wan1Ip;
+  }
+  if (data.wan2Ip) {
+    return data.wan2Ip;
+  }
+  return undefined;
+}
