@@ -6,6 +6,26 @@ JupiterOne provides a managed integration for Cisco Meraki. The integration
 connects directly to Cisco Meraki REST APIs to obtain configuration metadata and
 analyze resource relationships.
 
+## Cisco Meraki + JupiterOne Integration Benefits
+
+- Visualize Cisco Meraki administrators, SAML roles, and devices within your
+  network sites in the JupiterOne graph.
+- Map Cisco Meraki users to employees in your JupiterOne account.
+- Map Cisco Meraki Wi-Fi, VLAN, and other network devices to your network sites.
+- Monitor changes to Cisco Meraki administrators, SAML roles, and devices within
+  your network sites using JupiterOne alerts.
+
+## How it Works
+
+- JupiterOne periodically fetches Cisco Meraki administrators, SAML roles, and devices to update the graph.
+- Write JupiterOne queries to review and monitor updates to the graph.
+- Configure alerts to take action when the JupiterOne graph changes.
+
+## Requirements
+
+- JupiterOne requires an API Key configured in your Cisco Meraki account. 
+- You must have permission in JupiterOne to install new integrations.
+
 ## Integration Instance Configuration
 
 The integration is triggered by an event containing the information for a
