@@ -8,7 +8,7 @@ analyze resource relationships.
 
 ## Cisco Meraki + JupiterOne Integration Benefits
 
-- Visualize Cisco Meraki administrators, SAML roles, and devices within your
+- Visualize Cisco Meraki administrators, SAML roles, and devices within
   network sites in the JupiterOne graph.
 - Map Cisco Meraki users to employees in your JupiterOne account.
 - Map Cisco Meraki Wi-Fi, VLAN, and other network devices to your network sites.
