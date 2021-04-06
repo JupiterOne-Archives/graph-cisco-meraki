@@ -1,10 +1,4 @@
-# JupiterOne Managed Integration for Cisco Meraki
-
-## Overview
-
-JupiterOne provides a managed integration for Cisco Meraki. The integration
-connects directly to Cisco Meraki REST APIs to obtain configuration metadata and
-analyze resource relationships.
+# Integration with JupiterOne
 
 ## Cisco Meraki + JupiterOne Integration Benefits
 
@@ -26,15 +20,43 @@ analyze resource relationships.
 - JupiterOne requires an API Key configured in your Cisco Meraki account. 
 - You must have permission in JupiterOne to install new integrations.
 
-## Integration Instance Configuration
+## Support
 
-The integration is triggered by an event containing the information for a
-specific integration instance. Users configure the integration by providing API
-credentials obtained through the Cisco Meraki Dashboard.
+If you need help with this integration, please contact
+[JupiterOne Support](https://support.jupiterone.io).
+
+## Integration Walkthrough
+
+### In Cisco Meraki
 
 Meraki documentation provides detailed [instructions to enable API access][1].
 
-## Entities
+### In JupiterOne
+
+1. From the configuration **Gear Icon**, select **Integrations**.
+2. Scroll to the **Cisco Meraki** integration tile and click it.
+3. Click the **Add Configuration** button and configure the following settings:
+- Enter the **Account Name** by which you'd like to identify this Cisco Meraki
+   account in JupiterOne. Ingested entities will have this value stored in
+   `tag.AccountName` when **Tag with Account Name** is checked.
+- Enter a **Description** that will further assist your team when identifying
+   the integration instance.
+- Select a **Polling Interval** that you feel is sufficient for your monitoring
+   needs. You may leave this as `DISABLED` and manually execute the integration.
+- Enter the **API Key** configured for read access in Cisco Meraki.
+4. Click **Create Configuration** once all values are provided.
+
+## How to Uninstall
+
+1. From the configuration **Gear Icon**, select **Integrations**.
+2. Scroll to the **Cisco Meraki** integration tile and click it.
+3. Identify and click the **integration to delete**.
+4. Click the **trash can** icon.
+5. Click the **Remove** button to delete the integration.
+
+## Data Model
+
+### Entities
 
 The following entity resources are ingested when the integration runs.
 
@@ -48,7 +70,7 @@ The following entity resources are ingested when the integration runs.
 | VLAN             | `meraki_vlan`         | `Network`             |
 | Device           | `meraki_device`       | `Device`, `Host`      |
 
-## Relationships
+### Relationships
 
 The following relationships are created/mapped:
 
