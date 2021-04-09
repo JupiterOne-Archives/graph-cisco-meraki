@@ -20,4 +20,4 @@ test('rejects if unable to hit provider apis', async () => {
   await expect(validateInvocation(context)).rejects.toThrow(
     /Failed to authenticate/,
   );
-});
+}, 10000);
