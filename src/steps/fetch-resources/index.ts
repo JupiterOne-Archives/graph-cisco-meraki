@@ -1,9 +1,13 @@
 import { IntegrationConfig } from '../../types';
 
 import {
-  createIntegrationRelationship,
+  createDirectRelationship,
+  createMappedRelationship,
+  Entity,
   IntegrationStep,
   IntegrationStepExecutionContext,
+  Relationship,
+  RelationshipClass,
   RelationshipDirection,
 } from '@jupiterone/integration-sdk-core';
 
@@ -19,30 +23,36 @@ import {
   INTERNET_ENTITY,
   convertVlan,
 } from '../../converter';
+import {
+  Entities,
+  MappedRelationships,
+  Relationships,
+  StepIds,
+} from '../../constants';
 
-export const STEP_ID = 'fetch-resources';
-
-const step: IntegrationStep = {
-  id: STEP_ID,
+const step: IntegrationStep<IntegrationConfig> = {
+  id: StepIds.FETCH_RESOURCES,
   name: 'Fetch Meraki Organizations, Users, Networks, and Devices',
-  types: [
-    'cisco_meraki_account',
-    'meraki_organization',
-    'meraki_admin',
-    'meraki_saml_role',
-    'meraki_network',
-    'meraki_device',
-    'meraki_vlan',
-    'meraki_wifi',
-    'cisco_meraki_account_has_meraki_organization',
-    'meraki_organization_has_admin',
-    'meraki_organization_has_saml_role',
-    'meraki_organization_has_network',
-    'meraki_network_has_device',
-    'meraki_network_has_vlan',
-    'meraki_network_has_wifi',
-    'meraki_device_connects_internet',
+  entities: [
+    Entities.ACCOUNT,
+    Entities.ORGANIZATION,
+    Entities.ADMIN,
+    Entities.SAML_ROLE,
+    Entities.NETWORK,
+    Entities.DEVICE,
+    Entities.VLAN,
+    Entities.WIFI,
   ],
+  relationships: [
+    Relationships.ACCOUNT_HAS_ORGANIZATION,
+    Relationships.ORGANIZATION_HAS_ADMIN,
+    Relationships.ORGANIZATION_HAS_SAML_ROLE,
+    Relationships.ORGANIZATION_HAS_NEWTORK,
+    Relationships.NETWORK_HAS_DEVICE,
+    Relationships.NETWORK_HAS_VLAN,
+    Relationships.NETWORK_HAS_WIFI,
+  ],
+  mappedRelationships: [MappedRelationships.DEVICE_CONNECTS_INTERNET],
   async executionHandler({
     instance,
     jobState,
@@ -54,15 +64,15 @@ const step: IntegrationStep = {
     await jobState.addEntities(orgEntities);
 
     const accountEntity = convertAccount(orgs[0]);
-    const accountOrgRelationships = [];
+    const accountOrgRelationships: Relationship[] = [];
     await jobState.addEntities([accountEntity]);
 
     for (const org of orgEntities) {
       accountOrgRelationships.push(
-        createIntegrationRelationship({
+        createDirectRelationship({
           from: accountEntity,
           to: org,
-          _class: 'HAS',
+          _class: RelationshipClass.HAS,
         }),
       );
 
@@ -71,10 +81,10 @@ const step: IntegrationStep = {
       await jobState.addEntities(networkEntities);
 
       const orgNetworkRelationships = networkEntities.map((net) =>
-        createIntegrationRelationship({
+        createDirectRelationship({
           from: org,
           to: net,
-          _class: 'HAS',
+          _class: RelationshipClass.HAS,
         }),
       );
       await jobState.addRelationships(orgNetworkRelationships);
@@ -85,21 +95,21 @@ const step: IntegrationStep = {
         await jobState.addEntities(deviceEntities);
 
         const networkDeviceRelationships = deviceEntities.map((device) =>
-          createIntegrationRelationship({
+          createDirectRelationship({
             from: network,
             to: device,
-            _class: 'HAS',
+            _class: RelationshipClass.HAS,
           }),
         );
         await jobState.addRelationships(networkDeviceRelationships);
 
-        const internetDeviceRelationships = [];
+        const internetDeviceRelationships: Relationship[] = [];
         deviceEntities.forEach((device) => {
           if (device.publicIp) {
             internetDeviceRelationships.push(
-              createIntegrationRelationship({
-                _class: 'CONNECTS',
-                _type: 'meraki_device_connects_internet',
+              createMappedRelationship({
+                _class: MappedRelationships.DEVICE_CONNECTS_INTERNET._class,
+                _type: MappedRelationships.DEVICE_CONNECTS_INTERNET._type,
                 _mapping: {
                   relationshipDirection: RelationshipDirection.FORWARD,
                   sourceEntityKey: device._key,
@@ -118,10 +128,10 @@ const step: IntegrationStep = {
           await jobState.addEntities(vlanEntities);
 
           const networkVlanRelationships = vlanEntities.map((vlan) =>
-            createIntegrationRelationship({
+            createDirectRelationship({
               from: network,
               to: vlan,
-              _class: 'HAS',
+              _class: RelationshipClass.HAS,
             }),
           );
           await jobState.addRelationships(networkVlanRelationships);
@@ -129,7 +139,7 @@ const step: IntegrationStep = {
 
         if (network.type === 'wireless') {
           const ssids = await client.getSSIDs(network.id);
-          const ssidEntities = [];
+          const ssidEntities: Entity[] = [];
           ssids.forEach((ssid) => {
             if (!ssid.name.startsWith('Unconfigured')) {
               ssid.psk = 'REDACTED';
@@ -141,10 +151,10 @@ const step: IntegrationStep = {
           await jobState.addEntities(ssidEntities);
 
           const networkSSIDRelationships = ssidEntities.map((ssid) =>
-            createIntegrationRelationship({
+            createDirectRelationship({
               from: network,
               to: ssid,
-              _class: 'HAS',
+              _class: RelationshipClass.HAS,
             }),
           );
           await jobState.addRelationships(networkSSIDRelationships);
@@ -156,10 +166,10 @@ const step: IntegrationStep = {
       await jobState.addEntities(adminEntities);
 
       const orgAdminRelationships = adminEntities.map((admin) =>
-        createIntegrationRelationship({
+        createDirectRelationship({
           from: org,
           to: admin,
-          _class: 'HAS',
+          _class: RelationshipClass.HAS,
         }),
       );
       await jobState.addRelationships(orgAdminRelationships);
@@ -169,10 +179,10 @@ const step: IntegrationStep = {
       await jobState.addEntities(samlRolesEntities);
 
       const orgSamlRoleRelationships = samlRolesEntities.map((role) =>
-        createIntegrationRelationship({
+        createDirectRelationship({
           from: org,
           to: role,
-          _class: 'HAS',
+          _class: RelationshipClass.HAS,
         }),
       );
       await jobState.addRelationships(orgSamlRoleRelationships);

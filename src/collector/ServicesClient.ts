@@ -28,7 +28,7 @@ export class ServicesClient {
    * Get Organizations
    */
   async getOrganizations(): Promise<MerakiOrganization[]> {
-    const res: object[] = await meraki.OrganizationsController.getOrganizations();
+    const res = await meraki.OrganizationsController.getOrganizations();
     return res as MerakiOrganization[];
   }
 
@@ -36,7 +36,7 @@ export class ServicesClient {
    * Get Admin Users of an Organization
    */
   async getAdmins(organizationId: string): Promise<MerakiAdminUser[]> {
-    const res: object[] = await meraki.AdminsController.getOrganizationAdmins(
+    const res = await meraki.AdminsController.getOrganizationAdmins(
       organizationId,
     );
     return res as MerakiAdminUser[];
@@ -46,7 +46,7 @@ export class ServicesClient {
    * Get SAML Roles of an Organization
    */
   async getSamlRoles(organizationId: string): Promise<MerakiSamlRole[]> {
-    const res: object[] = await meraki.SAMLRolesController.getOrganizationSamlRoles(
+    const res = await meraki.SAMLRolesController.getOrganizationSamlRoles(
       organizationId,
     );
     return res as MerakiSamlRole[];
@@ -56,11 +56,9 @@ export class ServicesClient {
    * Get Networks of an Organization
    */
   async getNetworks(organizationId: string): Promise<MerakiNetwork[]> {
-    const res: object[] = await meraki.NetworksController.getOrganizationNetworks(
-      {
-        organizationId,
-      },
-    );
+    const res = await meraki.NetworksController.getOrganizationNetworks({
+      organizationId,
+    });
     return res as MerakiNetwork[];
   }
 
@@ -68,9 +66,7 @@ export class ServicesClient {
    * Get VLANs in a Network
    */
   async getVlans(networkId: string): Promise<MerakiVlan[]> {
-    const res: object[] = await meraki.VlansController.getNetwork_vlans(
-      networkId,
-    );
+    const res = await meraki.VlansController.getNetwork_vlans(networkId);
     return res as MerakiVlan[];
   }
 
@@ -78,9 +74,7 @@ export class ServicesClient {
    * Get Devices in a Network
    */
   async getDevices(networkId: string): Promise<MerakiDevice[]> {
-    const res: object[] = await meraki.DevicesController.getNetworkDevices(
-      networkId,
-    );
+    const res = await meraki.DevicesController.getNetworkDevices(networkId);
     return res as MerakiDevice[];
   }
 
@@ -88,7 +82,7 @@ export class ServicesClient {
    * Get Clients in a Network
    */
   async getClients(networkId: string): Promise<MerakiClient[]> {
-    const res: object[] = await meraki.ClientsController.getNetworkClients({
+    const res = await meraki.ClientsController.getNetworkClients({
       networkId,
     });
     return res as MerakiClient[];
@@ -98,9 +92,7 @@ export class ServicesClient {
    * Get SSIDs of a Wireless Network
    */
   async getSSIDs(networkId: string): Promise<MerakiSSID[]> {
-    const res: object[] = await meraki.SsidsController.getNetwork_ssids(
-      networkId,
-    );
+    const res = await meraki.SsidsController.getNetwork_ssids(networkId);
     return res as MerakiSSID[];
   }
 }

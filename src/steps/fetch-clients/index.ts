@@ -1,5 +1,5 @@
 import { convertNetworkClientRelationship } from '../../converter';
-import { IntegrationConfig } from '../../types';
+// import { IntegrationConfig } from '../../types';
 
 import {
   IntegrationStep,
@@ -7,28 +7,32 @@ import {
 } from '@jupiterone/integration-sdk-core';
 
 import { createServicesClient } from '../../collector';
-import { STEP_ID as FETCH_RESOURCES_STEP } from '../fetch-resources';
+import { Entities, MappedRelationships, StepIds } from '../../constants';
+import { IntegrationConfig } from '../../types';
 
-export const STEP_ID = 'fetch-clients';
-
-const step: IntegrationStep = {
-  id: STEP_ID,
+const step: IntegrationStep<IntegrationConfig> = {
+  id: StepIds.FETCH_CLIENTS,
   name: 'Fetch Meraki Network Clients',
-  types: ['meraki_network_has_client', 'meraki_vlan_has_client'],
-  dependsOn: [FETCH_RESOURCES_STEP],
+  entities: [],
+  relationships: [],
+  mappedRelationships: [
+    MappedRelationships.NETWORK_HAS_CLIENT,
+    MappedRelationships.VLAN_HAS_CLIENT,
+  ],
+  dependsOn: [StepIds.FETCH_RESOURCES],
   async executionHandler({
     instance,
     jobState,
   }: IntegrationStepExecutionContext<IntegrationConfig>) {
     const client = createServicesClient(instance);
     await jobState.iterateEntities(
-      { _type: 'meraki_network' },
+      { _type: Entities.NETWORK._type },
       async (network) => {
         if (network.id) {
           try {
-            const clients = await client.getClients(network.id);
+            const clients = await client.getClients(network.id as string);
             const relationships = clients.map((client) =>
-              convertNetworkClientRelationship(network.id, client),
+              convertNetworkClientRelationship(network.id as string, client),
             );
             await jobState.addRelationships(relationships);
           } catch (err) {
