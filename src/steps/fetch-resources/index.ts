@@ -3,8 +3,10 @@ import { IntegrationConfig } from '../../types';
 import {
   createDirectRelationship,
   createMappedRelationship,
+  Entity,
   IntegrationStep,
   IntegrationStepExecutionContext,
+  Relationship,
   RelationshipClass,
   RelationshipDirection,
 } from '@jupiterone/integration-sdk-core';
@@ -28,7 +30,7 @@ import {
   StepIds,
 } from '../../constants';
 
-const step: IntegrationStep = {
+const step: IntegrationStep<IntegrationConfig> = {
   id: StepIds.FETCH_RESOURCES,
   name: 'Fetch Meraki Organizations, Users, Networks, and Devices',
   entities: [
@@ -62,7 +64,7 @@ const step: IntegrationStep = {
     await jobState.addEntities(orgEntities);
 
     const accountEntity = convertAccount(orgs[0]);
-    const accountOrgRelationships = [];
+    const accountOrgRelationships: Relationship[] = [];
     await jobState.addEntities([accountEntity]);
 
     for (const org of orgEntities) {
@@ -101,7 +103,7 @@ const step: IntegrationStep = {
         );
         await jobState.addRelationships(networkDeviceRelationships);
 
-        const internetDeviceRelationships = [];
+        const internetDeviceRelationships: Relationship[] = [];
         deviceEntities.forEach((device) => {
           if (device.publicIp) {
             internetDeviceRelationships.push(
@@ -137,7 +139,7 @@ const step: IntegrationStep = {
 
         if (network.type === 'wireless') {
           const ssids = await client.getSSIDs(network.id);
-          const ssidEntities = [];
+          const ssidEntities: Entity[] = [];
           ssids.forEach((ssid) => {
             if (!ssid.name.startsWith('Unconfigured')) {
               ssid.psk = 'REDACTED';

@@ -4,25 +4,26 @@
   "description": "A graph conversion tool for https://meraki.cisco.com",
   "license": "MPL-2.0",
   "files": [
-    "dist"
+    "src"
   ],
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "src/index.js",
+  "types": "src/index.d.ts",
   "publishConfig": {
     "access": "public"
   },
   "scripts": {
-    "collect": "j1-integration collect",
+    "start": "j1-integration collect",
     "graph": "j1-integration visualize",
-    "start": "yarn collect; yarn graph",
+    "graph:types": "j1-integration visualize-types",
+    "graph:spec": "j1-integration visualize-types --project-path docs/spec --output-file ./.j1-integration/types-graph/index.spec.html",
     "lint": "eslint . --cache --fix --ext .ts,.tsx",
     "format": "prettier --write '**/*.{ts,js,json,css,md,yml}'",
-    "type-check": "tsc --noEmit",
-    "test": "jest --passWithNoTests",
+    "type-check": "tsc",
+    "test": "jest",
+    "test:env": "LOAD_ENV=1 yarn test",
     "test:ci": "yarn lint && yarn type-check && yarn test",
-    "prebuild": "yarn test:ci",
-    "build": "tsc -p tsconfig.dist.json --declaration",
-    "prepack": "yarn build"
+    "build": "tsc -p tsconfig.dist.json --declaration && cp README.md dist/README.md",
+    "prepush": "yarn lint && yarn type-check && jest --changedSince main"
   },
   "peerDependencies": {
     "@jupiterone/integration-sdk-core": "^7.0.0"

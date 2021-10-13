@@ -1,5 +1,5 @@
 import { convertNetworkClientRelationship } from '../../converter';
-import { IntegrationConfig } from '../../types';
+// import { IntegrationConfig } from '../../types';
 
 import {
   IntegrationStep,
@@ -8,8 +8,9 @@ import {
 
 import { createServicesClient } from '../../collector';
 import { Entities, MappedRelationships, StepIds } from '../../constants';
+import { IntegrationConfig } from '../../types';
 
-const step: IntegrationStep = {
+const step: IntegrationStep<IntegrationConfig> = {
   id: StepIds.FETCH_CLIENTS,
   name: 'Fetch Meraki Network Clients',
   entities: [],
