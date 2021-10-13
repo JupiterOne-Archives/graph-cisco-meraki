@@ -8,7 +8,6 @@ export const StepIds = {
 
 export const Entities = {
   ACCOUNT: {
-    // not in jupiterone.md
     resourceName: 'Account',
     _type: 'cisco_meraki_account',
     _class: 'Account',
