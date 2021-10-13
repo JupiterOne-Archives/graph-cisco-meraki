@@ -1,29 +1,33 @@
 import { MerakiClient } from '../collector';
 import {
   convertProperties,
-  createIntegrationRelationship,
+  createMappedRelationship,
   getTime,
   Relationship,
+  RelationshipClass,
   RelationshipDirection,
 } from '@jupiterone/integration-sdk-core';
 import createEntityKey from './utils/createEntityKey';
+import { Entities, MappedRelationships, TargetEntities } from '../constants';
 
 export const convertNetworkClientRelationship = (
   networkId: string,
   client: MerakiClient,
 ): Relationship =>
-  createIntegrationRelationship({
-    _class: 'HAS',
-    _type: client.vlan ? 'meraki_vlan_has_client' : 'meraki_network_has_client',
+  createMappedRelationship({
+    _class: RelationshipClass.HAS,
+    _type: client.vlan
+      ? MappedRelationships.VLAN_HAS_CLIENT._type
+      : MappedRelationships.NETWORK_HAS_CLIENT._type,
     _mapping: {
       relationshipDirection: RelationshipDirection.FORWARD,
       sourceEntityKey: client.vlan
-        ? createEntityKey('meraki_vlan', `${networkId}:${client.vlan}`)
-        : createEntityKey('meraki_network', networkId),
+        ? createEntityKey(Entities.VLAN._type, `${networkId}:${client.vlan}`)
+        : createEntityKey(Entities.NETWORK._type, networkId),
       targetFilterKeys: [['_class', 'macAddress']],
       targetEntity: {
         ...convertProperties(client),
-        _class: ['Device', 'Host'],
+        _class: TargetEntities.CLIENT._class,
         displayName: client.description || client.mac,
         macAddress: client.mac,
         ipAddress: client.ip,

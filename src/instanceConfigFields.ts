@@ -1,6 +1,7 @@
 import { IntegrationInstanceConfigFieldMap } from '@jupiterone/integration-sdk-core';
+import { IntegrationConfig } from './types';
 
-const instanceConfigFields: IntegrationInstanceConfigFieldMap = {
+const instanceConfigFields: IntegrationInstanceConfigFieldMap<IntegrationConfig> = {
   apiKey: {
     type: 'string',
     mask: true,

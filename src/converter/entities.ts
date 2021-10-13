@@ -13,6 +13,7 @@ import {
   getTime,
 } from '@jupiterone/integration-sdk-core';
 import createEntityKey from './utils/createEntityKey';
+import { Entities, TargetEntities } from '../constants';
 
 export const convertAccount = (
   data: MerakiOrganization,
@@ -21,9 +22,9 @@ export const convertAccount = (
     entityData: {
       source: data,
       assign: {
-        _key: createEntityKey('cisco_meraki_account', data.name),
-        _type: 'cisco_meraki_account',
-        _class: 'Account',
+        _key: createEntityKey(Entities.ORGANIZATION._type, data.name),
+        _type: Entities.ACCOUNT._type,
+        _class: Entities.ACCOUNT._class,
         name: data.name,
         displayName: `${data.name} Cisco Meraki Dashboard`,
       },
@@ -37,9 +38,9 @@ export const convertOrganization = (
     entityData: {
       source: data,
       assign: {
-        _key: createEntityKey('meraki_organization', data.id),
-        _type: 'meraki_organization',
-        _class: 'Organization',
+        _key: createEntityKey(Entities.ORGANIZATION._type, data.id),
+        _type: Entities.ORGANIZATION._type,
+        _class: Entities.ORGANIZATION._class,
         id: data.id,
         name: data.name,
         displayName: data.name,
@@ -56,9 +57,9 @@ export const convertAdminUser = (
       source: data,
       assign: {
         ...convertProperties(data),
-        _key: createEntityKey('meraki_admin', data.id),
-        _type: 'meraki_admin',
-        _class: 'User',
+        _key: createEntityKey(Entities.ADMIN._type, data.id),
+        _type: Entities.ADMIN._type,
+        _class: Entities.ADMIN._class,
         name: data.name,
         displayName: data.name,
         admin: true,
@@ -77,9 +78,9 @@ export const convertSamlRole = (
       source: data,
       assign: {
         ...convertProperties(data),
-        _key: createEntityKey('meraki_saml_role', data.id),
-        _type: 'meraki_saml_role',
-        _class: 'AccessRole',
+        _key: createEntityKey(Entities.SAML_ROLE._type, data.id),
+        _type: Entities.SAML_ROLE._type,
+        _class: Entities.SAML_ROLE._class,
         name: data.role,
         displayName: data.role,
       },
@@ -93,9 +94,9 @@ export const convertNetwork = (
     entityData: {
       source: data,
       assign: {
-        _key: createEntityKey('meraki_network', data.id),
-        _type: 'meraki_network',
-        _class: 'Site',
+        _key: createEntityKey(Entities.NETWORK._type, data.id),
+        _type: Entities.NETWORK._type,
+        _class: Entities.NETWORK._class,
         id: data.id,
         name: data.name,
         displayName: data.name,
@@ -116,11 +117,11 @@ export const convertSSID = (
       assign: {
         ...convertProperties(data),
         _key: createEntityKey(
-          'meraki_wifi',
+          Entities.WIFI._type,
           `${networkId}:${data.number}:${data.name}`,
         ),
-        _type: 'meraki_wifi',
-        _class: 'Network',
+        _type: Entities.WIFI._type,
+        _class: Entities.WIFI._class,
         name: data.name,
         displayName: data.name,
         type: 'wireless',
@@ -141,9 +142,12 @@ export const convertVlan = (
       source: data,
       assign: {
         ...convertProperties(data),
-        _key: createEntityKey('meraki_vlan', `${data.networkId}:${data.id}`),
-        _type: 'meraki_vlan',
-        _class: 'Network',
+        _key: createEntityKey(
+          Entities.VLAN._type,
+          `${data.networkId}:${data.id}`,
+        ),
+        _type: Entities.VLAN._type,
+        _class: Entities.VLAN._class,
         id: `${data.networkId}:${data.id}`,
         vlanId: data.id,
         name: data.name,
@@ -167,11 +171,11 @@ export const convertDevice = (
       assign: {
         ...convertProperties(data),
         _key: createEntityKey(
-          'meraki_device',
+          Entities.DEVICE._type,
           `${data.networkId}:${data.mac || data.serial}`,
         ),
-        _type: 'meraki_device',
-        _class: ['Host', 'Device'],
+        _type: Entities.DEVICE._type,
+        _class: Entities.DEVICE._class,
         category: 'network',
         make: 'Cisco Meraki',
         name: data.name,
@@ -188,8 +192,8 @@ export const convertDevice = (
   });
 
 export const INTERNET_ENTITY = {
-  _class: ['Internet', 'Network'],
-  _type: 'internet',
+  _class: TargetEntities.INTERNET._class,
+  _type: TargetEntities.INTERNET._type,
   displayName: 'Internet',
   CIDR: '0.0.0.0/0',
   CIDRv6: '::/0',
