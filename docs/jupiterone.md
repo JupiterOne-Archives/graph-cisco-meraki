@@ -57,35 +57,6 @@ Meraki documentation provides detailed [instructions to enable API access][1].
 4. Click the **trash can** icon.
 5. Click the **Remove** button to delete the integration.
 
-## Data Model
-
-### Entities
-
-The following entity resources are ingested when the integration runs.
-
-| Meraki Resources | \_type of the Entity  | \_class of the Entity |
-| ---------------- | --------------------- | --------------------- |
-| Organization     | `meraki_organization` | `Organization`        |
-| Admin            | `meraki_admin`        | `User`                |
-| SAML Role        | `meraki_saml_role`    | `AccessRole`          |
-| Network          | `meraki_network`      | `Site`                |
-| SSID             | `meraki_wifi`         | `Network`             |
-| VLAN             | `meraki_vlan`         | `Network`             |
-| Device           | `meraki_device`       | `Device`, `Host`      |
-
-### Relationships
-
-The following relationships are created/mapped:
-
-| From                  | Edge    | To                 |
-| --------------------- | ------- | ------------------ |
-| `meraki_organization` | **HAS** | `meraki_admin`     |
-| `meraki_organization` | **HAS** | `meraki_saml_role` |
-| `meraki_organization` | **HAS** | `meraki_network`   |
-| `meraki_network`      | **HAS** | `meraki_wifi`      |
-| `meraki_network`      | **HAS** | `meraki_vlan`      |
-| `meraki_network`      | **HAS** | `meraki_device`    |
-
 [1]:
   https://documentation.meraki.com/zGeneral_Administration/Other_Topics/The_Cisco_Meraki_Dashboard_API
 
