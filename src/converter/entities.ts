@@ -194,6 +194,7 @@ export const convertDevice = (
 export const INTERNET_ENTITY = {
   _class: TargetEntities.INTERNET._class,
   _type: TargetEntities.INTERNET._type,
+  _key: 'global:internet',
   displayName: 'Internet',
   CIDR: '0.0.0.0/0',
   CIDRv6: '::/0',
