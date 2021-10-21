@@ -10,6 +10,7 @@ import {
   RelationshipClass,
   RelationshipDirection,
 } from '@jupiterone/integration-sdk-core';
+import { INTERNET } from '@jupiterone/data-model';
 
 import { createServicesClient } from '../../collector';
 import {
@@ -20,7 +21,6 @@ import {
   convertOrganization,
   convertSamlRole,
   convertSSID,
-  INTERNET_ENTITY,
   convertVlan,
 } from '../../converter';
 import {
@@ -114,7 +114,7 @@ const step: IntegrationStep<IntegrationConfig> = {
                   relationshipDirection: RelationshipDirection.FORWARD,
                   sourceEntityKey: device._key,
                   targetFilterKeys: [['_key', 'CIDR']],
-                  targetEntity: INTERNET_ENTITY,
+                  targetEntity: INTERNET,
                 },
               }),
             );
