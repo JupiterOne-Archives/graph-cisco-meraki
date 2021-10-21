@@ -113,7 +113,7 @@ const step: IntegrationStep<IntegrationConfig> = {
                 _mapping: {
                   relationshipDirection: RelationshipDirection.FORWARD,
                   sourceEntityKey: device._key,
-                  targetFilterKeys: [['_key', 'CIDR']],
+                  targetFilterKeys: [['_type', '_key']],
                   targetEntity: INTERNET,
                 },
               }),
