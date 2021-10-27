@@ -13,7 +13,7 @@ import {
   getTime,
 } from '@jupiterone/integration-sdk-core';
 import createEntityKey from './utils/createEntityKey';
-import { Entities, TargetEntities } from '../constants';
+import { Entities } from '../constants';
 
 export const convertAccount = (
   data: MerakiOrganization,
@@ -190,16 +190,6 @@ export const convertDevice = (
       },
     },
   });
-
-export const INTERNET_ENTITY = {
-  _class: TargetEntities.INTERNET._class,
-  _type: TargetEntities.INTERNET._type,
-  displayName: 'Internet',
-  CIDR: '0.0.0.0/0',
-  CIDRv6: '::/0',
-  public: true,
-  trusted: false,
-};
 
 function getPublicIp(data: MerakiDevice): string | undefined {
   if (data.wanIp) {
