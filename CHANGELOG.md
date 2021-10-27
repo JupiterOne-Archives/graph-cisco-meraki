@@ -8,6 +8,13 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 2.2.1 - 2021-10-27
+
+### Fixed
+
+- The mapped relationship `Device-CONNECTS->Internet` now correctly targets the
+  global Internet entity.
+
 ## 2.2.0 - 2021-10-13
 
 ### Changed
