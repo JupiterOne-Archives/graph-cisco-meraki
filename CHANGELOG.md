@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 2.2.2 - 2022-03-24
+
 ### Added
 
 - `getVlans` method will now check if VLANs are enabled for the network before
