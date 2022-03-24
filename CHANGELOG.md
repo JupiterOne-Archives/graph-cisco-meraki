@@ -8,6 +8,13 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Added
+
+- `getVlans` method will now check if VLANs are enabled for the network before
+  trying to get them. This fixes an error where if VLANs are not enabled for a
+  network, calling `getNetwork_vlans` will result in an error like
+  `{error: "VLANS are not enabled for this network"}`
+
 ## 2.2.1 - 2021-10-27
 
 ### Fixed

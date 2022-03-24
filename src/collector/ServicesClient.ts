@@ -66,6 +66,18 @@ export class ServicesClient {
    * Get VLANs in a Network
    */
   async getVlans(networkId: string): Promise<MerakiVlan[]> {
+    const enabledResponse = await meraki.VlansController.getNetwork_vlans_EnabledState(
+      networkId,
+    );
+
+    // some networks may not have VLANs enabled.
+    // https://community.meraki.com/t5/Security-SD-WAN/MX-device-ports/m-p/102185
+    // https://community.cisco.com/t5/other-cloud-subjects/meraki-unable-to-get-vlan-info/td-p/4089912
+    // if Vlans aren't enabled we shouldn't try to get them
+    if (enabledResponse?.enabled === false) {
+      return [] as MerakiVlan[];
+    }
+
     const res = await meraki.VlansController.getNetwork_vlans(networkId);
     return res as MerakiVlan[];
   }
