@@ -47,7 +47,7 @@ const step: IntegrationStep<IntegrationConfig> = {
     Relationships.ACCOUNT_HAS_ORGANIZATION,
     Relationships.ORGANIZATION_HAS_ADMIN,
     Relationships.ORGANIZATION_HAS_SAML_ROLE,
-    Relationships.ORGANIZATION_HAS_NEWTORK,
+    Relationships.ORGANIZATION_HAS_NETWORK,
     Relationships.NETWORK_HAS_DEVICE,
     Relationships.NETWORK_HAS_VLAN,
     Relationships.NETWORK_HAS_WIFI,
