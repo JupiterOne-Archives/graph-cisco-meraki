@@ -15,7 +15,7 @@ import {
   StepIds,
 } from '../../constants';
 import { convertDevice } from '../../converter';
-import { IntegrationConfig } from '../../types';
+import { IntegrationConfig } from '../../config';
 
 export const deviceSteps = [
   {

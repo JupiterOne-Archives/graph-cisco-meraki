@@ -7,7 +7,7 @@ import {
 import { createServicesClient, MerakiNetwork } from '../../collector';
 import { Entities, Relationships, StepIds } from '../../constants';
 import { convertVlan } from '../../converter';
-import { IntegrationConfig } from '../../types';
+import { IntegrationConfig } from '../../config';
 
 export const vlansSteps = [
   {

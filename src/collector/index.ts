@@ -1,4 +1,4 @@
-import { IntegrationConfig } from '../types';
+import { IntegrationConfig } from '../config';
 
 import { IntegrationInstance } from '@jupiterone/integration-sdk-core';
 

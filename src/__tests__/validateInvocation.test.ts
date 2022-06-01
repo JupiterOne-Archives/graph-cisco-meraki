@@ -1,4 +1,4 @@
-import { IntegrationConfig } from '../types';
+import { IntegrationConfig } from '../config';
 
 import { createMockExecutionContext } from '@jupiterone/integration-sdk-testing';
 

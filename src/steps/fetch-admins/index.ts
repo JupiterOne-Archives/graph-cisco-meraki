@@ -7,7 +7,7 @@ import {
 import { createServicesClient, MerakiOrganization } from '../../collector';
 import { Entities, Relationships, StepIds } from '../../constants';
 import { convertAdminUser } from '../../converter';
-import { IntegrationConfig } from '../../types';
+import { IntegrationConfig } from '../../config';
 
 export const adminSteps = [
   {

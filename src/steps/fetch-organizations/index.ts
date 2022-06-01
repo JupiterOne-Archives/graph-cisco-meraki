@@ -6,7 +6,7 @@ import {
 import { createServicesClient } from '../../collector';
 import { Entities, Relationships, StepIds } from '../../constants';
 import { convertAccount, convertOrganization } from '../../converter';
-import { IntegrationConfig } from '../../types';
+import { IntegrationConfig } from '../../config';
 
 export const organizationSteps = [
   {
