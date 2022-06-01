@@ -1,6 +1,5 @@
 import {
   createDirectRelationship,
-  Entity,
   getRawData,
   IntegrationStepExecutionContext,
   RelationshipClass,
@@ -35,27 +34,21 @@ export async function fetchWifi({
         const ssids = await client.getSSIDs(network.id);
         // TODO convert to iterateEntities pattern when client supports it
 
-        const ssidEntities: Entity[] = [];
-
         for (const ssid of ssids) {
           if (!ssid.name.startsWith('Unconfigured')) {
             ssid.psk = 'REDACTED';
-            const ssidEntity = convertSSID(ssid, network.id);
-            delete ssidEntity.CIDR; // deletes '255.255.255.255' placeholder CIDR
-            ssidEntities.push(ssidEntity);
+            const ssidEntity = await jobState.addEntity(
+              convertSSID(ssid, network.id),
+            );
+
+            await jobState.addRelationship(
+              createDirectRelationship({
+                from: networkEntity,
+                to: ssidEntity,
+                _class: RelationshipClass.HAS,
+              }),
+            );
           }
-        }
-
-        await jobState.addEntities(ssidEntities);
-
-        for (const ssidEntity of ssidEntities) {
-          await jobState.addRelationship(
-            createDirectRelationship({
-              from: networkEntity,
-              to: ssidEntity,
-              _class: RelationshipClass.HAS,
-            }),
-          );
         }
       }
     },
