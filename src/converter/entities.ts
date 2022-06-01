@@ -129,7 +129,7 @@ export const convertSSID = (
         public: data.authMode === 'open',
         internal: data.authMode !== 'open',
         guest: !!data.name.match(/guest/i),
-        CIDR: '255.255.255.255', // CIDR is required by data model
+        CIDR: null, // CIDR is required by data model
       },
     },
   });
