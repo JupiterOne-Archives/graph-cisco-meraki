@@ -4,7 +4,7 @@ import {
   RelationshipClass,
 } from '@jupiterone/integration-sdk-core';
 import { createServicesClient } from '../../collector';
-import { Entities, StepIds } from '../../constants';
+import { Entities, Relationships, StepIds } from '../../constants';
 import { convertAccount, convertOrganization } from '../../converter';
 import { IntegrationConfig } from '../../types';
 
@@ -13,7 +13,7 @@ export const organizationSteps = [
     id: StepIds.FETCH_ORGANIZATIONS,
     name: 'Fetch Meraki Organizations',
     entities: [Entities.ORGANIZATION, Entities.ACCOUNT],
-    relationships: [],
+    relationships: [Relationships.ACCOUNT_HAS_ORGANIZATION],
     dependsOn: [],
     executionHandler: fetchOrganizations,
   },

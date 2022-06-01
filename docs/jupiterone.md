@@ -92,14 +92,15 @@ The following entities are created:
 
 The following relationships are created:
 
-| Source Entity `_type` | Relationship `_class` | Target Entity `_type` |
-| --------------------- | --------------------- | --------------------- |
-| `meraki_network`      | **HAS**               | `meraki_device`       |
-| `meraki_network`      | **HAS**               | `meraki_vlan`         |
-| `meraki_network`      | **HAS**               | `meraki_wifi`         |
-| `meraki_organization` | **HAS**               | `meraki_admin`        |
-| `meraki_organization` | **HAS**               | `meraki_network`      |
-| `meraki_organization` | **HAS**               | `meraki_saml_role`    |
+| Source Entity `_type`  | Relationship `_class` | Target Entity `_type` |
+| ---------------------- | --------------------- | --------------------- |
+| `cisco_meraki_account` | **HAS**               | `meraki_organization` |
+| `meraki_network`       | **HAS**               | `meraki_device`       |
+| `meraki_network`       | **HAS**               | `meraki_vlan`         |
+| `meraki_network`       | **HAS**               | `meraki_wifi`         |
+| `meraki_organization`  | **HAS**               | `meraki_admin`        |
+| `meraki_organization`  | **HAS**               | `meraki_network`      |
+| `meraki_organization`  | **HAS**               | `meraki_saml_role`    |
 
 ### Mapped Relationships
 

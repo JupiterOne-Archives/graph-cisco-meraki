@@ -12,7 +12,7 @@
     "access": "public"
   },
   "scripts": {
-    "start": "j1-integration collect",
+    "start": "j1-integration collect --disable-schema-validation",
     "graph": "j1-integration visualize",
     "graph:types": "j1-integration visualize-types",
     "graph:spec": "j1-integration visualize-types --project-path docs/spec --output-file ./.j1-integration/types-graph/index.spec.html",
