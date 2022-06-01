@@ -3,7 +3,14 @@ import { RelationshipDirection } from '@jupiterone/integration-sdk-core';
 
 export const StepIds = {
   FETCH_RESOURCES: 'fetch-resources',
+  FETCH_NETWORKS: 'fetch-networks',
+  FETCH_ORGANIZATIONS: 'fetch-organizations',
+  FETCH_ADMINS: 'fetch-admins',
+  FETCH_SAML_ROLES: 'fetch-saml-roles',
+  FETCH_DEVICES: 'fetch-devices',
+  FETCH_VLANS: 'fetch-vlans',
   FETCH_CLIENTS: 'fetch-clients',
+  FETCH_WIFI: 'fetch-wifi',
 };
 
 export const Entities = {
@@ -68,7 +75,7 @@ export const Relationships = {
     _class: RelationshipClass.HAS,
     targetType: Entities.SAML_ROLE._type,
   },
-  ORGANIZATION_HAS_NEWTORK: {
+  ORGANIZATION_HAS_NETWORK: {
     _type: 'meraki_organization_has_network',
     sourceType: Entities.ORGANIZATION._type,
     _class: RelationshipClass.HAS,
