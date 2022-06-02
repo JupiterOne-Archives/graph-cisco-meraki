@@ -17,37 +17,37 @@ export const Entities = {
   ACCOUNT: {
     resourceName: 'Account',
     _type: 'cisco_meraki_account',
-    _class: 'Account',
+    _class: ['Account'],
   },
   ORGANIZATION: {
     resourceName: 'Organization',
     _type: 'meraki_organization',
-    _class: 'Organization',
+    _class: ['Organization'],
   },
   ADMIN: {
     resourceName: 'Admin',
     _type: 'meraki_admin',
-    _class: 'User',
+    _class: ['User'],
   },
   SAML_ROLE: {
     resourceName: 'SAML Role',
     _type: 'meraki_saml_role',
-    _class: 'AccessRole',
+    _class: ['AccessRole'],
   },
   NETWORK: {
     resourceName: 'Network',
     _type: 'meraki_network',
-    _class: 'Site',
+    _class: ['Site'],
   },
   WIFI: {
     resourceName: 'SSID',
     _type: 'meraki_wifi',
-    _class: 'Network',
+    _class: ['Network'],
   },
   VLAN: {
     resourceName: 'VLAN',
     _type: 'meraki_vlan',
-    _class: 'Network',
+    _class: ['Network'],
   },
   DEVICE: {
     resourceName: 'Device',

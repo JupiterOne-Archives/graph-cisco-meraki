@@ -187,6 +187,7 @@ export const convertDevice = (
         privateIpAddress: data.lanIp ? data.lanIp : undefined,
         publicIp: getPublicIp(data),
         publicIpAddress: getPublicIp(data),
+        deviceId: null, // data-model required property
       },
     },
   });
