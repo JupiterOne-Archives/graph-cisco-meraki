@@ -8,7 +8,7 @@ import {
 
 import { createServicesClient } from '../../collector';
 import { Entities, MappedRelationships, StepIds } from '../../constants';
-import { IntegrationConfig } from '../../types';
+import { IntegrationConfig } from '../../config';
 
 export const clientSteps: IntegrationStep<IntegrationConfig>[] = [
   {
