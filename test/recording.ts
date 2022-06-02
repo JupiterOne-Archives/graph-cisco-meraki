@@ -44,18 +44,23 @@ function redact(entry): void {
   keysToRedactMap.set('samlConsumerUrl', DEFAULT_REDACT);
   keysToRedactMap.set('samlConsumerUrls', [DEFAULT_REDACT]);
 
-  // true for the application/json header
-  const isJson = (obj: any) =>
-    obj.name === 'content-type' && obj.value.includes('application/json');
+  const isContentTypeHeader = (header: any) => header.name === 'content-type';
+  const isApplicationJson = (header: any) =>
+    header.value.includes('application/json');
 
   const isJsonResponse = entry.response.headers.reduce(
     (flattenedValue, currentValue) => {
-      return isJson(currentValue) || flattenedValue;
+      return (
+        (isContentTypeHeader(currentValue) &&
+          isApplicationJson(currentValue)) ||
+        flattenedValue
+      );
     },
     false,
   );
-  // if we have a response that isn't json we can return early
-  // don't try to parse
+
+  // if we have a response that is not 'application/json' return early so we
+  // don't try to parse html
   if (!isJsonResponse) {
     return;
   }

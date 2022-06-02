@@ -6,6 +6,8 @@ import { setupMerakiRecording } from '../../../test';
 import { buildStepTestConfigForStep } from '../../../test/config';
 import { StepIds } from '../../constants';
 
+// TODO: @zemberdotnet remove timeout when we have identified why steps are
+// hanging/ taking a long time
 jest.setTimeout(100000);
 
 describe('vlansStep', () => {
