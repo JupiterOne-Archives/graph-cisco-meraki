@@ -117,6 +117,22 @@ export class ServicesClient {
     }
   }
 
+  async iterateSSIDs(
+    networkId: string,
+    iteratee: ResourceIteratee<MerakiSSID>,
+  ): Promise<void> {
+    const request: APIRequest = {
+      url: `${this.BASE_URL}/networks/${networkId}/wireless/ssids`,
+      method: 'GET',
+      headers: { 'X-Cisco-Meraki-API-Key': this.apiKey },
+    };
+
+    const response = await this.client.executeAPIRequest(request);
+    for (const ssid of response.data) {
+      await iteratee(ssid);
+    }
+  }
+
   async iterateVlans(
     networkId: string,
     iteratee: ResourceIteratee<MerakiVlan>,

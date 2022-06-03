@@ -20,6 +20,9 @@ export const wifiSteps = [
   },
 ];
 
+const isWirelessNetwork = (network: MerakiNetwork) =>
+  network.productTypes.includes('wireless');
+
 export async function fetchWifi({
   instance,
   jobState,
@@ -28,13 +31,9 @@ export async function fetchWifi({
   await jobState.iterateEntities(
     { _type: Entities.NETWORK._type },
     async (networkEntity) => {
-      if (networkEntity.type === 'wireless') {
-        const network = getRawData(networkEntity) as MerakiNetwork;
-
-        const ssids = await client.getSSIDs(network.id);
-        // TODO convert to iterateEntities pattern when client supports it
-
-        for (const ssid of ssids) {
+      const network = getRawData(networkEntity) as MerakiNetwork;
+      if (isWirelessNetwork(network)) {
+        await client.iterateSSIDs(network.id, async (ssid) => {
           if (!ssid.name.startsWith('Unconfigured')) {
             ssid.psk = 'REDACTED';
             const ssidEntity = await jobState.addEntity(
@@ -49,7 +48,7 @@ export async function fetchWifi({
               }),
             );
           }
-        }
+        });
       }
     },
   );
