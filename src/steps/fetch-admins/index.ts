@@ -30,12 +30,10 @@ export async function fetchAdmins({
     { _type: Entities.ORGANIZATION._type },
     async (organizationEntity) => {
       const organization = getRawData(organizationEntity) as MerakiOrganization;
-      const admins = await client.getAdmins(organization.id);
-      const adminEntities = await jobState.addEntities(
-        admins.map(convertAdminUser),
-      );
 
-      for (const adminEntity of adminEntities) {
+      await client.iterateAdmins(organization.id, async (admin) => {
+        const adminEntity = await jobState.addEntity(convertAdminUser(admin));
+
         await jobState.addRelationship(
           createDirectRelationship({
             from: organizationEntity,
@@ -43,7 +41,7 @@ export async function fetchAdmins({
             _class: RelationshipClass.HAS,
           }),
         );
-      }
+      });
     },
   );
 }

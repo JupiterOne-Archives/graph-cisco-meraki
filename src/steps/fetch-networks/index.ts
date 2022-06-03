@@ -29,13 +29,9 @@ export async function fetchNetworks({
     { _type: Entities.ORGANIZATION._type },
     async (organizationEntity) => {
       const organization = getRawData(organizationEntity) as MerakiOrganization;
-      const networks = await client.getNetworks(organization.id);
+      await client.iterateNetworks(organization.id, async (network) => {
+        const networkEntity = await jobState.addEntity(convertNetwork(network));
 
-      const networkEntities = await jobState.addEntities(
-        networks.map(convertNetwork),
-      );
-
-      for (const networkEntity of networkEntities) {
         await jobState.addRelationship(
           createDirectRelationship({
             from: organizationEntity,
@@ -43,7 +39,7 @@ export async function fetchNetworks({
             _class: RelationshipClass.HAS,
           }),
         );
-      }
+      });
     },
   );
 }

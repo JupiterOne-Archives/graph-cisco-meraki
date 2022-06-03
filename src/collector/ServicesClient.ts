@@ -65,6 +65,57 @@ export class ServicesClient {
     }
   }
 
+  async iterateNetworks(
+    organizationId: string,
+    iteratee: ResourceIteratee<MerakiNetwork>,
+  ): Promise<void> {
+    const request: APIRequest = {
+      url: `${this.BASE_URL}/organizations/${organizationId}/networks`,
+      method: 'GET',
+      headers: { 'X-Cisco-Meraki-API-Key': this.apiKey },
+    };
+
+    const response = await this.client.executeAPIRequest(request);
+
+    for (const network of response.data) {
+      await iteratee(network);
+    }
+  }
+
+  async iterateAdmins(
+    organizationId: string,
+    iteratee: ResourceIteratee<MerakiAdminUser>,
+  ): Promise<void> {
+    const request: APIRequest = {
+      url: `${this.BASE_URL}/organizations/${organizationId}/admins`,
+      method: 'GET',
+      headers: {
+        'X-Cisco-Meraki-API-Key': this.apiKey,
+      },
+    };
+
+    const response = await this.client.executeAPIRequest(request);
+    for (const admin of response.data) {
+      await iteratee(admin);
+    }
+  }
+
+  async iterateVlans(
+    networkId: string,
+    iteratee: ResourceIteratee<MerakiVlan>,
+  ): Promise<void> {
+    const request: APIRequest = {
+      url: `${this.BASE_URL}/networks/${networkId}/appliance/vlans`,
+      method: 'GET',
+      headers: { 'X-Cisco-Meraki-API-Key': this.apiKey },
+    };
+
+    const response = await this.client.executeAPIRequest(request);
+    for (const vlan of response.data) {
+      await iteratee(vlan);
+    }
+  }
+
   /**
    * Get Organizations
    */
