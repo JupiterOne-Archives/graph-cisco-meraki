@@ -49,6 +49,23 @@ export class ServicesClient {
     }
   }
 
+  async iterateDevices(
+    networkId: string,
+    iteratee: ResourceIteratee<MerakiDevice>,
+  ): Promise<void> {
+    const request: APIRequest = {
+      url: `${this.BASE_URL}/networks/${networkId}/devices`,
+      method: 'GET',
+      headers: { 'X-Cisco-Meraki-API-Key': this.apiKey },
+    };
+
+    const response = await this.client.executeAPIRequest(request);
+
+    for (const device of response.data) {
+      await iteratee(device);
+    }
+  }
+
   async iterateSamlRoles(
     organizationId: string,
     iteratee: ResourceIteratee<MerakiSamlRole>,

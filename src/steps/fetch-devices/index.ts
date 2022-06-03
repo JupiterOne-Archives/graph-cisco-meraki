@@ -38,13 +38,8 @@ export async function fetchDevices({
     { _type: Entities.NETWORK._type },
     async (networkEntity) => {
       const network = getRawData(networkEntity) as MerakiNetwork;
-      const devices = await client.getDevices(network.id);
-
-      const deviceEntities = await jobState.addEntities(
-        devices.map(convertDevice),
-      );
-
-      for (const deviceEntity of deviceEntities) {
+      await client.iterateDevices(network.id, async (device) => {
+        const deviceEntity = await jobState.addEntity(convertDevice(device));
         await jobState.addRelationship(
           createDirectRelationship({
             from: networkEntity,
@@ -67,7 +62,7 @@ export async function fetchDevices({
             }),
           );
         }
-      }
+      });
     },
   );
 }
