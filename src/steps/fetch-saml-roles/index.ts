@@ -25,6 +25,31 @@ export async function fetchSamlRoles({
   jobState,
 }: IntegrationStepExecutionContext<IntegrationConfig>) {
   const client = createServicesClient(instance);
+
+  await jobState.iterateEntities(
+    { _type: Entities.ORGANIZATION._type },
+    async (organizationEntity) => {
+      await client.iterateSamlRoles(
+        organizationEntity.id as string,
+        async () => {
+          const samlRoleEntity = await jobState.addEntity(
+            convertSamlRole(organizationEntity),
+          );
+
+          await jobState.addRelationship(
+            createDirectRelationship({
+              from: organizationEntity,
+              to: samlRoleEntity,
+              _class: RelationshipClass.HAS,
+            }),
+          );
+        },
+      );
+    },
+  );
+}
+
+/*
   await jobState.iterateEntities(
     { _type: Entities.ORGANIZATION._type },
     async (organizationEntity) => {
@@ -45,4 +70,4 @@ export async function fetchSamlRoles({
       }
     },
   );
-}
+  */

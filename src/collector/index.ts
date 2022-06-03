@@ -13,13 +13,5 @@ export * from './types';
 export function createServicesClient(
   instance: IntegrationInstance<IntegrationConfig>,
 ): ServicesClient {
-  const apiKey = instance.config.apiKey;
-
-  if (!apiKey) {
-    throw new Error(
-      'Configuration option "apiKey" is missing on the integration instance config',
-    );
-  }
-
-  return new ServicesClient({ apiKey });
+  return new ServicesClient({ apiKey: instance.config.apiKey });
 }

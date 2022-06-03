@@ -9,6 +9,10 @@ import {
   MerakiSamlRole,
   MerakiSSID,
 } from '.';
+import { APIClient } from '../client';
+import { APIRequest } from '../client/types';
+
+export type ResourceIteratee<T> = (resource: T) => void | Promise<void>;
 
 export interface ServicesClientInput {
   apiKey: string;
@@ -20,8 +24,45 @@ export interface ServicesClientInput {
  * ref: https://developer.cisco.com/meraki/api/#/rest/guides/node-js-sdk-quick-start
  */
 export class ServicesClient {
+  private BASE_URL = 'https://api.meraki.com/api/v1';
+  private client: APIClient;
+  private readonly apiKey: string;
+
   constructor({ apiKey }: ServicesClientInput) {
     meraki.Configuration.xCiscoMerakiAPIKey = apiKey;
+    this.client = new APIClient();
+    this.apiKey = apiKey;
+  }
+
+  async iterateOrganizations(
+    iteratee: ResourceIteratee<MerakiOrganization>,
+  ): Promise<void> {
+    const request: APIRequest = {
+      url: this.BASE_URL + '/organizations',
+      method: 'GET',
+      headers: { 'X-Cisco-Meraki-API-Key': this.apiKey },
+    };
+
+    const response = await this.client.executeAPIRequest(request);
+    for (const organization of response.data) {
+      await iteratee(organization);
+    }
+  }
+
+  async iterateSamlRoles(
+    organizationId: string,
+    iteratee: ResourceIteratee<MerakiSamlRole>,
+  ): Promise<void> {
+    const request: APIRequest = {
+      url: `${this.BASE_URL}/organizations/${organizationId}/samlRoles`,
+      method: 'GET',
+      headers: { 'X-Cisco-Meraki-API-Key': this.apiKey },
+    };
+
+    const response = await this.client.executeAPIRequest(request);
+    for (const samlRole of response.data) {
+      await iteratee(samlRole);
+    }
   }
 
   /**
