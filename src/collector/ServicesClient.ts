@@ -69,8 +69,14 @@ export class ServicesClient {
    * Get Organizations
    */
   async getOrganizations(): Promise<MerakiOrganization[]> {
-    const res = await meraki.OrganizationsController.getOrganizations();
-    return res as MerakiOrganization[];
+    const request: APIRequest = {
+      url: `${this.BASE_URL}/organizations`,
+      method: 'GET',
+      headers: { 'X-Cisco-Meraki-API-Key': this.apiKey },
+    };
+
+    const response = await this.client.executeAPIRequest(request);
+    return response.data;
   }
 
   /**

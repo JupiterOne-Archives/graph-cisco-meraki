@@ -1,10 +1,9 @@
 import {
   createDirectRelationship,
-  getRawData,
   IntegrationStepExecutionContext,
   RelationshipClass,
 } from '@jupiterone/integration-sdk-core';
-import { createServicesClient, MerakiOrganization } from '../../collector';
+import { createServicesClient } from '../../collector';
 import { Entities, Relationships, StepIds } from '../../constants';
 import { convertSamlRole } from '../../converter';
 import { IntegrationConfig } from '../../config';
@@ -31,9 +30,9 @@ export async function fetchSamlRoles({
     async (organizationEntity) => {
       await client.iterateSamlRoles(
         organizationEntity.id as string,
-        async () => {
+        async (samlRole) => {
           const samlRoleEntity = await jobState.addEntity(
-            convertSamlRole(organizationEntity),
+            convertSamlRole(samlRole),
           );
 
           await jobState.addRelationship(

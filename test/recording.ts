@@ -1,4 +1,5 @@
 import {
+  mutations,
   Recording,
   setupRecording as sdkSetupRecording,
   SetupRecordingInput,
@@ -37,6 +38,7 @@ export function setupMerakiRecording(
 }
 
 function redact(entry): void {
+  mutations.unzipGzippedRecordingEntry(entry);
   const DEFAULT_REDACT = '[REDACTED]';
   const keysToRedactMap = new Map();
 
