@@ -110,9 +110,19 @@ export class ServicesClient {
       headers: { 'X-Cisco-Meraki-API-Key': this.apiKey },
     };
 
-    const response = await this.client.executeAPIRequest(request);
-    for (const vlan of response.data) {
-      await iteratee(vlan);
+    // TODO: @zemberdotnet
+    // This is a hack around the fact that it's unclear how to distinguish
+    // an MX network. When we receive a response on how to distinguish them
+    // we should extract it into a utility function and add it into the actual
+    // step to not hide this logic.
+    try {
+      const response = await this.client.executeAPIRequest(request);
+
+      for (const vlan of response.data) {
+        await iteratee(vlan);
+      }
+    } catch (err) {
+      // Do nothing
     }
   }
 
