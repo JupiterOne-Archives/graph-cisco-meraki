@@ -18,6 +18,10 @@ export interface ServicesClientInput {
   apiKey: string;
 }
 
+interface createAuthenticatedAPIRequestInput extends Partial<APIRequest> {
+  url: string;
+}
+
 /**
  * Services API
  *
@@ -33,17 +37,25 @@ export class ServicesClient {
     this.client = new APIClient();
     this.apiKey = apiKey;
   }
+  private createAuthenticatedAPIRequest(
+    createAPIInput: createAuthenticatedAPIRequestInput,
+  ): APIRequest {
+    return {
+      method: 'GET',
+      headers: { 'X-Cisco-Meraki-API-Key': this.apiKey },
+      ...createAPIInput,
+    };
+  }
 
   async iterateOrganizations(
     iteratee: ResourceIteratee<MerakiOrganization>,
   ): Promise<void> {
-    const request: APIRequest = {
-      url: this.BASE_URL + '/organizations',
-      method: 'GET',
-      headers: { 'X-Cisco-Meraki-API-Key': this.apiKey },
-    };
+    const request = this.createAuthenticatedAPIRequest({
+      url: `${this.BASE_URL}/organizations`,
+    });
 
     const response = await this.client.executeAPIRequest(request);
+
     for (const organization of response.data) {
       await iteratee(organization);
     }
@@ -53,11 +65,9 @@ export class ServicesClient {
     networkId: string,
     iteratee: ResourceIteratee<MerakiDevice>,
   ): Promise<void> {
-    const request: APIRequest = {
+    const request: APIRequest = this.createAuthenticatedAPIRequest({
       url: `${this.BASE_URL}/networks/${networkId}/devices`,
-      method: 'GET',
-      headers: { 'X-Cisco-Meraki-API-Key': this.apiKey },
-    };
+    });
 
     const response = await this.client.executeAPIRequest(request);
 
@@ -70,13 +80,12 @@ export class ServicesClient {
     organizationId: string,
     iteratee: ResourceIteratee<MerakiSamlRole>,
   ): Promise<void> {
-    const request: APIRequest = {
+    const request: APIRequest = this.createAuthenticatedAPIRequest({
       url: `${this.BASE_URL}/organizations/${organizationId}/samlRoles`,
-      method: 'GET',
-      headers: { 'X-Cisco-Meraki-API-Key': this.apiKey },
-    };
+    });
 
     const response = await this.client.executeAPIRequest(request);
+
     for (const samlRole of response.data) {
       await iteratee(samlRole);
     }
@@ -86,11 +95,9 @@ export class ServicesClient {
     organizationId: string,
     iteratee: ResourceIteratee<MerakiNetwork>,
   ): Promise<void> {
-    const request: APIRequest = {
+    const request: APIRequest = this.createAuthenticatedAPIRequest({
       url: `${this.BASE_URL}/organizations/${organizationId}/networks`,
-      method: 'GET',
-      headers: { 'X-Cisco-Meraki-API-Key': this.apiKey },
-    };
+    });
 
     const response = await this.client.executeAPIRequest(request);
 
@@ -103,15 +110,12 @@ export class ServicesClient {
     organizationId: string,
     iteratee: ResourceIteratee<MerakiAdminUser>,
   ): Promise<void> {
-    const request: APIRequest = {
+    const request: APIRequest = this.createAuthenticatedAPIRequest({
       url: `${this.BASE_URL}/organizations/${organizationId}/admins`,
-      method: 'GET',
-      headers: {
-        'X-Cisco-Meraki-API-Key': this.apiKey,
-      },
-    };
+    });
 
     const response = await this.client.executeAPIRequest(request);
+
     for (const admin of response.data) {
       await iteratee(admin);
     }
@@ -121,14 +125,13 @@ export class ServicesClient {
     networkId: string,
     iteratee: ResourceIteratee<MerakiClient>,
   ) {
-    const request: APIRequest = {
+    const request: APIRequest = this.createAuthenticatedAPIRequest({
       url: `${this.BASE_URL}/networks/${networkId}/clients`,
-      method: 'GET',
-      headers: { 'X-Cisco-Meraki-API-Key': this.apiKey },
-    };
+    });
 
     try {
       const response = await this.client.executeAPIRequest(request);
+
       for (const client of response.data) {
         await iteratee(client);
       }
@@ -148,13 +151,12 @@ export class ServicesClient {
     networkId: string,
     iteratee: ResourceIteratee<MerakiSSID>,
   ): Promise<void> {
-    const request: APIRequest = {
+    const request: APIRequest = this.createAuthenticatedAPIRequest({
       url: `${this.BASE_URL}/networks/${networkId}/wireless/ssids`,
-      method: 'GET',
-      headers: { 'X-Cisco-Meraki-API-Key': this.apiKey },
-    };
+    });
 
     const response = await this.client.executeAPIRequest(request);
+
     for (const ssid of response.data) {
       await iteratee(ssid);
     }
@@ -164,11 +166,9 @@ export class ServicesClient {
     networkId: string,
     iteratee: ResourceIteratee<MerakiVlan>,
   ): Promise<void> {
-    const request: APIRequest = {
+    const request: APIRequest = this.createAuthenticatedAPIRequest({
       url: `${this.BASE_URL}/networks/${networkId}/appliance/vlans`,
-      method: 'GET',
-      headers: { 'X-Cisco-Meraki-API-Key': this.apiKey },
-    };
+    });
 
     // TODO: @zemberdotnet
     // This is a hack around the fact that it's unclear how to distinguish
@@ -190,13 +190,12 @@ export class ServicesClient {
    * Get Organizations
    */
   async getOrganizations(): Promise<MerakiOrganization[]> {
-    const request: APIRequest = {
+    const request: APIRequest = this.createAuthenticatedAPIRequest({
       url: `${this.BASE_URL}/organizations`,
-      method: 'GET',
-      headers: { 'X-Cisco-Meraki-API-Key': this.apiKey },
-    };
+    });
 
     const response = await this.client.executeAPIRequest(request);
+
     return response.data;
   }
 }
