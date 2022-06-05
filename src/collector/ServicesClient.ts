@@ -117,6 +117,33 @@ export class ServicesClient {
     }
   }
 
+  async iterateClients(
+    networkId: string,
+    iteratee: ResourceIteratee<MerakiNetwork>,
+  ) {
+    const request: APIRequest = {
+      url: `${this.BASE_URL}/networks/${networkId}/clients`,
+      method: 'GET',
+      headers: { 'X-Cisco-Meraki-API-Key': this.apiKey },
+    };
+
+    try {
+      const response = await this.client.executeAPIRequest(request);
+      for (const client of response.data) {
+        await iteratee(client);
+      }
+    } catch (err) {
+      // This is specific logic in place from the first version of this integration
+      // I think this is interesting and possibly the correct approach. However,
+      // we don't have good patterns in place for partial failures.
+      // Skipping over 404 and 400s is seen in other integrations, but often
+      // we just throw an error and move on.
+      if (err.status !== 400 || err.status !== 404) {
+        throw err;
+      }
+    }
+  }
+
   async iterateSSIDs(
     networkId: string,
     iteratee: ResourceIteratee<MerakiSSID>,

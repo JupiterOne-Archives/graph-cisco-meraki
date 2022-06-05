@@ -2,11 +2,12 @@ import { convertNetworkClientRelationship } from '../../converter';
 // import { IntegrationConfig } from '../../types';
 
 import {
+  getRawData,
   IntegrationStep,
   IntegrationStepExecutionContext,
 } from '@jupiterone/integration-sdk-core';
 
-import { createServicesClient } from '../../collector';
+import { createServicesClient, MerakiNetwork } from '../../collector';
 import { Entities, MappedRelationships, StepIds } from '../../constants';
 import { IntegrationConfig } from '../../config';
 
@@ -21,29 +22,24 @@ export const clientSteps: IntegrationStep<IntegrationConfig>[] = [
       MappedRelationships.VLAN_HAS_CLIENT,
     ],
     dependsOn: [StepIds.FETCH_NETWORKS],
-    async executionHandler({
-      instance,
-      jobState,
-    }: IntegrationStepExecutionContext<IntegrationConfig>) {
-      const client = createServicesClient(instance);
-      await jobState.iterateEntities(
-        { _type: Entities.NETWORK._type },
-        async (network) => {
-          if (network.id) {
-            try {
-              const clients = await client.getClients(network.id as string);
-              const relationships = clients.map((client) =>
-                convertNetworkClientRelationship(network.id as string, client),
-              );
-              await jobState.addRelationships(relationships);
-            } catch (err) {
-              if (err.errorCode != 400 && err.errCode != 404) {
-                throw err;
-              }
-            }
-          }
-        },
-      );
-    },
+    executionHandler: fetchClients,
   },
 ];
+
+export async function fetchClients({
+  instance,
+  jobState,
+}: IntegrationStepExecutionContext<IntegrationConfig>) {
+  const client = createServicesClient(instance);
+  await jobState.iterateEntities(
+    { _type: Entities.NETWORK._type },
+    async (networkEntity) => {
+      const network = getRawData(networkEntity) as MerakiNetwork;
+      await client.iterateClients(network.id, async (client) => {
+        await jobState.addRelationship(
+          convertNetworkClientRelationship(network.id, client),
+        );
+      });
+    },
+  );
+}
