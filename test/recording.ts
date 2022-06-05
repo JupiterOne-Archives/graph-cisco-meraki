@@ -51,13 +51,9 @@ function redact(entry): void {
     header.value.includes('application/json');
 
   const isJsonResponse = entry.response.headers.reduce(
-    (flattenedValue, currentValue) => {
-      return (
-        (isContentTypeHeader(currentValue) &&
-          isApplicationJson(currentValue)) ||
-        flattenedValue
-      );
-    },
+    (flattenedValue: Boolean, currentValue: Object) =>
+      flattenedValue ||
+      (isContentTypeHeader(currentValue) && isApplicationJson(currentValue)),
     false,
   );
 

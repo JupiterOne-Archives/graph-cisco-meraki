@@ -7,7 +7,11 @@ import {
   IntegrationStepExecutionContext,
 } from '@jupiterone/integration-sdk-core';
 
-import { createServicesClient, MerakiNetwork } from '../../collector';
+import {
+  createServicesClient,
+  MerakiClient,
+  MerakiNetwork,
+} from '../../collector';
 import { Entities, MappedRelationships, StepIds } from '../../constants';
 import { IntegrationConfig } from '../../config';
 
@@ -35,7 +39,7 @@ export async function fetchClients({
     { _type: Entities.NETWORK._type },
     async (networkEntity) => {
       const network = getRawData(networkEntity) as MerakiNetwork;
-      await client.iterateClients(network.id, async (client) => {
+      await client.iterateClients(network.id, async (client: MerakiClient) => {
         await jobState.addRelationship(
           convertNetworkClientRelationship(network.id, client),
         );

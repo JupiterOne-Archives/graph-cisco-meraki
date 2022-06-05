@@ -4,7 +4,11 @@ import {
   IntegrationStepExecutionContext,
   RelationshipClass,
 } from '@jupiterone/integration-sdk-core';
-import { createServicesClient, MerakiOrganization } from '../../collector';
+import {
+  createServicesClient,
+  MerakiAdminUser,
+  MerakiOrganization,
+} from '../../collector';
 import { Entities, Relationships, StepIds } from '../../constants';
 import { convertAdminUser } from '../../converter';
 import { IntegrationConfig } from '../../config';
@@ -31,17 +35,20 @@ export async function fetchAdmins({
     async (organizationEntity) => {
       const organization = getRawData(organizationEntity) as MerakiOrganization;
 
-      await client.iterateAdmins(organization.id, async (admin) => {
-        const adminEntity = await jobState.addEntity(convertAdminUser(admin));
+      await client.iterateAdmins(
+        organization.id,
+        async (admin: MerakiAdminUser) => {
+          const adminEntity = await jobState.addEntity(convertAdminUser(admin));
 
-        await jobState.addRelationship(
-          createDirectRelationship({
-            from: organizationEntity,
-            to: adminEntity,
-            _class: RelationshipClass.HAS,
-          }),
-        );
-      });
+          await jobState.addRelationship(
+            createDirectRelationship({
+              from: organizationEntity,
+              to: adminEntity,
+              _class: RelationshipClass.HAS,
+            }),
+          );
+        },
+      );
     },
   );
 }

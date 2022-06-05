@@ -3,7 +3,7 @@ import {
   IntegrationStepExecutionContext,
   RelationshipClass,
 } from '@jupiterone/integration-sdk-core';
-import { createServicesClient } from '../../collector';
+import { createServicesClient, MerakiOrganization } from '../../collector';
 import { Entities, Relationships, StepIds } from '../../constants';
 import { convertAccount, convertOrganization } from '../../converter';
 import { IntegrationConfig } from '../../config';
@@ -24,7 +24,7 @@ export async function fetchOrganizations({
   jobState,
 }: IntegrationStepExecutionContext<IntegrationConfig>): Promise<void> {
   const client = createServicesClient(instance);
-  const orgs = await client.getOrganizations();
+  const orgs: MerakiOrganization[] = await client.getOrganizations();
   const orgEntities = await jobState.addEntities(orgs.map(convertOrganization));
 
   const accountEntity = await jobState.addEntity(convertAccount(orgs[0]));

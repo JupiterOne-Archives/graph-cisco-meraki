@@ -4,7 +4,11 @@ import {
   IntegrationStepExecutionContext,
   RelationshipClass,
 } from '@jupiterone/integration-sdk-core';
-import { createServicesClient, MerakiNetwork } from '../../collector';
+import {
+  createServicesClient,
+  MerakiNetwork,
+  MerakiVlan,
+} from '../../collector';
 import { Entities, Relationships, StepIds } from '../../constants';
 import { convertVlan } from '../../converter';
 import { IntegrationConfig } from '../../config';
@@ -29,7 +33,7 @@ export async function fetchVlans({
     { _type: Entities.NETWORK._type },
     async (networkEntity) => {
       const network = getRawData(networkEntity) as MerakiNetwork;
-      await client.iterateVlans(network.id, async (vlan) => {
+      await client.iterateVlans(network.id, async (vlan: MerakiVlan) => {
         const vlanEntity = await jobState.addEntity(convertVlan(vlan));
         await jobState.addRelationship(
           createDirectRelationship({

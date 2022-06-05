@@ -4,7 +4,11 @@ import {
   IntegrationStepExecutionContext,
   RelationshipClass,
 } from '@jupiterone/integration-sdk-core';
-import { createServicesClient, MerakiNetwork } from '../../collector';
+import {
+  createServicesClient,
+  MerakiNetwork,
+  MerakiSSID,
+} from '../../collector';
 import { Entities, Relationships, StepIds } from '../../constants';
 import { convertSSID } from '../../converter';
 import { IntegrationConfig } from '../../config';
@@ -33,7 +37,7 @@ export async function fetchWifi({
     async (networkEntity) => {
       const network = getRawData(networkEntity) as MerakiNetwork;
       if (isWirelessNetwork(network)) {
-        await client.iterateSSIDs(network.id, async (ssid) => {
+        await client.iterateSSIDs(network.id, async (ssid: MerakiSSID) => {
           if (!ssid.name.startsWith('Unconfigured')) {
             ssid.psk = 'REDACTED';
             const ssidEntity = await jobState.addEntity(

@@ -3,7 +3,7 @@ import {
   IntegrationStepExecutionContext,
   RelationshipClass,
 } from '@jupiterone/integration-sdk-core';
-import { createServicesClient } from '../../collector';
+import { createServicesClient, MerakiSamlRole } from '../../collector';
 import { Entities, Relationships, StepIds } from '../../constants';
 import { convertSamlRole } from '../../converter';
 import { IntegrationConfig } from '../../config';
@@ -30,7 +30,7 @@ export async function fetchSamlRoles({
     async (organizationEntity) => {
       await client.iterateSamlRoles(
         organizationEntity.id as string,
-        async (samlRole) => {
+        async (samlRole: MerakiSamlRole) => {
           const samlRoleEntity = await jobState.addEntity(
             convertSamlRole(samlRole),
           );
