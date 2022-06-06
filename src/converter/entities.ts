@@ -54,16 +54,14 @@ export const convertAdminUser = (
 ): ReturnType<typeof createIntegrationEntity> =>
   createIntegrationEntity({
     // TODO: @zemberdotnet
+    // `data.tags: string[]`
     // We need to test that the tags supplied by the API will work with the
     // J1 Tagging system. Based on current typings from example responses from the
     // docs, the tags are incompatible. However, I'm not sure this is completely
     // true and should be tested manually with a real response. If incompatible,
     // apply transformations to the tags to make them compatible.
     entityData: {
-      source: {
-        ...data,
-        tags: [],
-      },
+      source: data,
       assign: {
         _key: createEntityKey(Entities.ADMIN._type, data.id),
         _type: Entities.ADMIN._type,
@@ -80,7 +78,7 @@ export const convertAdminUser = (
         orgAccess: data.orgAccess,
         accountStatus: data.accountStatus,
         // TODO: @zemberdotnet
-        // active: acountStatus == "ok"?
+        // active: accountStatus == "ok"?
         twoFactorAuthEnabled: data.twoFactorAuthEnabled,
         hasApiKey: data.hasApiKey,
       },
@@ -99,10 +97,7 @@ export const convertSamlRole = (
     // apply transformations to the tags to make them compatible.
     // alternatively, we should look at changes in the sdk
     entityData: {
-      source: {
-        ...data,
-        tags: [],
-      },
+      source: data,
       assign: {
         _key: createEntityKey(Entities.SAML_ROLE._type, data.id),
         _type: Entities.SAML_ROLE._type,
@@ -128,10 +123,7 @@ export const convertNetwork = (
     // apply transformations to the tags to make them compatible.
     // alternatively, we should look at changes in the sdk
     entityData: {
-      source: {
-        ...data,
-        tags: [],
-      },
+      source: data,
       assign: {
         _key: createEntityKey(Entities.NETWORK._type, data.id),
         _type: Entities.NETWORK._type,
@@ -141,6 +133,7 @@ export const convertNetwork = (
         displayName: data.name,
         organizationId: data.organizationId,
         timeZone: data.timeZone,
+        notes: data.notes,
         type: getNetworkType(data),
         productTypes: data.productTypes,
       },
@@ -221,10 +214,7 @@ export const convertDevice = (
     // alternatively, we should look at changes in the sdk
 
     entityData: {
-      source: {
-        ...data,
-        tags: [],
-      },
+      source: data,
       assign: {
         _key: createEntityKey(
           Entities.DEVICE._type,
@@ -255,14 +245,13 @@ export const convertDevice = (
         firmware: data.firmware,
         networkId: data.networkId,
         floorPlanId: data.floorPlanId,
+
         url: data.url,
-        // bonus
         webLink: data.url,
 
         // this doesn't follow the data model, notes should be string[]
         notes: data.notes,
 
-        // Not adding these is breaking, but I'd rather not add them
         lanIp: data.lanIp,
         wanIp: data.wanIp,
         wan1Ip: data.wan1Ip,
