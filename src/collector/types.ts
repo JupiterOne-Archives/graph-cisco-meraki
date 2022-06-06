@@ -108,6 +108,7 @@ export type MerakiDevice = {
   wanIp?: string;
   wan1Ip?: string;
   wan2Ip?: string;
+  url?: string;
   tags: string[];
   networkId: string;
   beaconIdParams: {

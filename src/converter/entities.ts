@@ -141,7 +141,8 @@ export const convertNetwork = (
         displayName: data.name,
         organizationId: data.organizationId,
         timeZone: data.timeZone,
-        type: data.productTypes,
+        type: getNetworkType(data),
+        productTypes: data.productTypes,
       },
     },
   });
@@ -151,14 +152,6 @@ export const convertSSID = (
   networkId: string,
 ): ReturnType<typeof createIntegrationEntity> =>
   createIntegrationEntity({
-    // TODO: @zemberdotnet
-    // We need to test that the tags supplied by the API will work with the
-    // J1 Tagging system. Based on current typings from example responses from the
-    // docs, the tags are incompatible. However, I'm not sure this is completely
-    // true and should be tested manually with a real response. If incompatible,
-    // apply transformations to the tags to make them compatible.
-    // alternatively, we should look at changes in the sdk
-
     entityData: {
       source: data,
       assign: {
@@ -219,13 +212,20 @@ export const convertDevice = (
   data: MerakiDevice,
 ): ReturnType<typeof createIntegrationEntity> =>
   createIntegrationEntity({
+    // TODO: @zemberdotnet
+    // We need to test that the tags supplied by the API will work with the
+    // J1 Tagging system. Based on current typings from example responses from the
+    // docs, the tags are incompatible. However, I'm not sure this is completely
+    // true and should be tested manually with a real response. If incompatible,
+    // apply transformations to the tags to make them compatible.
+    // alternatively, we should look at changes in the sdk
+
     entityData: {
       source: {
         ...data,
         tags: [],
       },
       assign: {
-        ...convertProperties(data),
         _key: createEntityKey(
           Entities.DEVICE._type,
           `${data.networkId}:${data.mac || data.serial}`,
@@ -259,6 +259,9 @@ export const convertDevice = (
         // bonus
         webLink: data.url,
 
+        // this doesn't follow the data model, notes should be string[]
+        notes: data.notes,
+
         // Not adding these is breaking, but I'd rather not add them
         lanIp: data.lanIp,
         wanIp: data.wanIp,
@@ -279,4 +282,14 @@ function getPublicIp(data: MerakiDevice): string | undefined {
     return data.wan2Ip;
   }
   return undefined;
+}
+
+function getNetworkType(data: MerakiNetwork): string {
+  if (!data.productTypes) {
+    return 'unknown';
+  } else if (data.productTypes.length === 1) {
+    return data.productTypes[0];
+  } else {
+    return 'combined';
+  }
 }
