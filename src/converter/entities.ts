@@ -10,7 +10,7 @@ import {
 import {
   createIntegrationEntity,
   convertProperties,
-  getTime,
+  parseTimePropertyValue,
 } from '@jupiterone/integration-sdk-core';
 import createEntityKey from './utils/createEntityKey';
 import { Entities } from '../constants';
@@ -53,8 +53,17 @@ export const convertAdminUser = (
   data: MerakiAdminUser,
 ): ReturnType<typeof createIntegrationEntity> =>
   createIntegrationEntity({
+    // TODO: @zemberdotnet
+    // We need to test that the tags supplied by the API will work with the
+    // J1 Tagging system. Based on current typings from example responses from the
+    // docs, the tags are incompatible. However, I'm not sure this is completely
+    // true and should be tested manually with a real response. If incompatible,
+    // apply transformations to the tags to make them compatible.
     entityData: {
-      source: data,
+      source: {
+        ...data,
+        tags: [],
+      },
       assign: {
         ...convertProperties(data),
         _key: createEntityKey(Entities.ADMIN._type, data.id),
@@ -64,7 +73,7 @@ export const convertAdminUser = (
         displayName: data.name,
         admin: true,
         mfaEnabled: data.twoFactorAuthEnabled,
-        lastActive: getTime(data.lastActive && data.lastActive * 1000),
+        lastActive: parseTimePropertyValue(data.lastActive),
         username: data.email,
       },
     },
@@ -74,8 +83,18 @@ export const convertSamlRole = (
   data: MerakiSamlRole,
 ): ReturnType<typeof createIntegrationEntity> =>
   createIntegrationEntity({
+    // TODO: @zemberdotnet
+    // We need to test that the tags supplied by the API will work with the
+    // J1 Tagging system. Based on current typings from example responses from the
+    // docs, the tags are incompatible. However, I'm not sure this is completely
+    // true and should be tested manually with a real response. If incompatible,
+    // apply transformations to the tags to make them compatible.
+    // alternatively, we should look at changes in the sdk
     entityData: {
-      source: data,
+      source: {
+        ...data,
+        tags: [],
+      },
       assign: {
         ...convertProperties(data),
         _key: createEntityKey(Entities.SAML_ROLE._type, data.id),
@@ -91,8 +110,18 @@ export const convertNetwork = (
   data: MerakiNetwork,
 ): ReturnType<typeof createIntegrationEntity> =>
   createIntegrationEntity({
+    // TODO: @zemberdotnet
+    // We need to test that the tags supplied by the API will work with the
+    // J1 Tagging system. Based on current typings from example responses from the
+    // docs, the tags are incompatible. However, I'm not sure this is completely
+    // true and should be tested manually with a real response. If incompatible,
+    // apply transformations to the tags to make them compatible.
+    // alternatively, we should look at changes in the sdk
     entityData: {
-      source: data,
+      source: {
+        ...data,
+        tags: [],
+      },
       assign: {
         _key: createEntityKey(Entities.NETWORK._type, data.id),
         _type: Entities.NETWORK._type,
@@ -102,7 +131,7 @@ export const convertNetwork = (
         displayName: data.name,
         organizationId: data.organizationId,
         timeZone: data.timeZone,
-        type: data.type,
+        type: data.productTypes,
       },
     },
   });
@@ -112,6 +141,14 @@ export const convertSSID = (
   networkId: string,
 ): ReturnType<typeof createIntegrationEntity> =>
   createIntegrationEntity({
+    // TODO: @zemberdotnet
+    // We need to test that the tags supplied by the API will work with the
+    // J1 Tagging system. Based on current typings from example responses from the
+    // docs, the tags are incompatible. However, I'm not sure this is completely
+    // true and should be tested manually with a real response. If incompatible,
+    // apply transformations to the tags to make them compatible.
+    // alternatively, we should look at changes in the sdk
+
     entityData: {
       source: data,
       assign: {
@@ -167,7 +204,10 @@ export const convertDevice = (
 ): ReturnType<typeof createIntegrationEntity> =>
   createIntegrationEntity({
     entityData: {
-      source: data,
+      source: {
+        ...data,
+        tags: [],
+      },
       assign: {
         ...convertProperties(data),
         _key: createEntityKey(

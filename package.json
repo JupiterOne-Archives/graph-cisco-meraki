@@ -38,7 +38,6 @@
     "@jupiterone/integration-sdk-core": "^8.13.11",
     "@jupiterone/integration-sdk-dev-tools": "^8.13.11",
     "@jupiterone/integration-sdk-testing": "^8.13.11",
-    "jest-fetch-mock": "^3.0.3",
-    "type-fest": "^0.15.0"
+    "jest-fetch-mock": "^3.0.3"
   }
 }
