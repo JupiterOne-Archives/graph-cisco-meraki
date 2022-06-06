@@ -47,26 +47,3 @@ export async function fetchSamlRoles({
     },
   );
 }
-
-/*
-  await jobState.iterateEntities(
-    { _type: Entities.ORGANIZATION._type },
-    async (organizationEntity) => {
-      const organization = getRawData(organizationEntity) as MerakiOrganization;
-      const samlRoles = await client.getSamlRoles(organization.id);
-      const samlRolesEntities = await jobState.addEntities(
-        samlRoles.map(convertSamlRole),
-      );
-
-      for (const samlRoleEntity of samlRolesEntities) {
-        await jobState.addRelationship(
-          createDirectRelationship({
-            from: organizationEntity,
-            to: samlRoleEntity,
-            _class: RelationshipClass.HAS,
-          }),
-        );
-      }
-    },
-  );
-  */
