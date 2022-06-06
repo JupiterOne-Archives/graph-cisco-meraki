@@ -65,7 +65,6 @@ export const convertAdminUser = (
         tags: [],
       },
       assign: {
-        ...convertProperties(data),
         _key: createEntityKey(Entities.ADMIN._type, data.id),
         _type: Entities.ADMIN._type,
         _class: Entities.ADMIN._class,
@@ -75,6 +74,15 @@ export const convertAdminUser = (
         mfaEnabled: data.twoFactorAuthEnabled,
         lastActive: parseTimePropertyValue(data.lastActive),
         username: data.email,
+        id: data.id,
+        email: data.email,
+        authenticationMethod: data.authenticationMethod,
+        orgAccess: data.orgAccess,
+        accountStatus: data.accountStatus,
+        // TODO: @zemberdotnet
+        // active: acountStatus == "ok"?
+        twoFactorAuthEnabled: data.twoFactorAuthEnabled,
+        hasApiKey: data.hasApiKey,
       },
     },
   });
@@ -96,12 +104,14 @@ export const convertSamlRole = (
         tags: [],
       },
       assign: {
-        ...convertProperties(data),
         _key: createEntityKey(Entities.SAML_ROLE._type, data.id),
         _type: Entities.SAML_ROLE._type,
         _class: Entities.SAML_ROLE._class,
         name: data.role,
         displayName: data.role,
+        id: data.id,
+        role: data.role,
+        orgAccess: data.orgAccess,
       },
     },
   });
@@ -178,7 +188,6 @@ export const convertVlan = (
     entityData: {
       source: data,
       assign: {
-        ...convertProperties(data),
         _key: createEntityKey(
           Entities.VLAN._type,
           `${data.networkId}:${data.id}`,
@@ -195,6 +204,13 @@ export const convertVlan = (
         dmz: !!data.name.match(/dmz/i),
         public: !!data.name.match(/dmz|public/i),
         wireless: !!data.name.match(/wireless|wifi/i),
+        networkId: data.networkId,
+        applianceIp: data.applianceIp,
+        subnet: data.subnet,
+        dnsNameservers: data.dnsNameservers,
+        dhcpHandling: data.dhcpHandling,
+        dhcpLeaseTime: data.dhcpLeaseTime,
+        dhcpBootOptionsEnabled: data.dhcpBootOptionsEnabled,
       },
     },
   });
@@ -228,6 +244,26 @@ export const convertDevice = (
         publicIp: getPublicIp(data),
         publicIpAddress: getPublicIp(data),
         deviceId: null, // data-model required property
+
+        serial: data.serial,
+        lat: data.lat,
+        lng: data.lng,
+        latitude: data.lat,
+        longitude: data.lng,
+        address: data.address,
+        mac: data.mac,
+        firmware: data.firmware,
+        networkId: data.networkId,
+        floorPlanId: data.floorPlanId,
+        url: data.url,
+        // bonus
+        webLink: data.url,
+
+        // Not adding these is breaking, but I'd rather not add them
+        lanIp: data.lanIp,
+        wanIp: data.wanIp,
+        wan1Ip: data.wan1Ip,
+        wan2Ip: data.wan2Ip,
       },
     },
   });
