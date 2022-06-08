@@ -21,9 +21,10 @@ export const samlRoleSteps = [
 
 export async function fetchSamlRoles({
   instance,
+  logger,
   jobState,
 }: IntegrationStepExecutionContext<IntegrationConfig>) {
-  const client = createServicesClient(instance);
+  const client = createServicesClient(instance.config, logger);
 
   await jobState.iterateEntities(
     { _type: Entities.ORGANIZATION._type },

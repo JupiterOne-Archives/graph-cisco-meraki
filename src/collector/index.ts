@@ -1,6 +1,6 @@
 import { IntegrationConfig } from '../config';
 
-import { IntegrationInstance } from '@jupiterone/integration-sdk-core';
+import { IntegrationLogger } from '@jupiterone/integration-sdk-core';
 
 import { ServicesClient } from './ServicesClient';
 
@@ -11,7 +11,11 @@ export * from './types';
  * api key.
  */
 export function createServicesClient(
-  instance: IntegrationInstance<IntegrationConfig>,
+  config: IntegrationConfig,
+  logger: IntegrationLogger,
 ): ServicesClient {
-  return new ServicesClient({ apiKey: instance.config.apiKey });
+  return new ServicesClient({
+    apiKey: config.apiKey,
+    logger: logger,
+  });
 }

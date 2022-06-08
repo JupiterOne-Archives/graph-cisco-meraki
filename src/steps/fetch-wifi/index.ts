@@ -29,9 +29,10 @@ const isWirelessNetwork = (network: MerakiNetwork) =>
 
 export async function fetchWifi({
   instance,
+  logger,
   jobState,
 }: IntegrationStepExecutionContext<IntegrationConfig>) {
-  const client = createServicesClient(instance);
+  const client = createServicesClient(instance.config, logger);
   await jobState.iterateEntities(
     { _type: Entities.NETWORK._type },
     async (networkEntity) => {

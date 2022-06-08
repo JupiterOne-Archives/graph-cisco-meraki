@@ -21,9 +21,10 @@ export const organizationSteps = [
 
 export async function fetchOrganizations({
   instance,
+  logger,
   jobState,
 }: IntegrationStepExecutionContext<IntegrationConfig>): Promise<void> {
-  const client = createServicesClient(instance);
+  const client = createServicesClient(instance.config, logger);
   const orgs: MerakiOrganization[] = await client.getOrganizations();
   const orgEntities = await jobState.addEntities(orgs.map(convertOrganization));
 

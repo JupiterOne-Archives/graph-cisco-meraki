@@ -32,9 +32,10 @@ export const clientSteps: IntegrationStep<IntegrationConfig>[] = [
 
 export async function fetchClients({
   instance,
+  logger,
   jobState,
 }: IntegrationStepExecutionContext<IntegrationConfig>) {
-  const client = createServicesClient(instance);
+  const client = createServicesClient(instance.config, logger);
   await jobState.iterateEntities(
     { _type: Entities.NETWORK._type },
     async (networkEntity) => {

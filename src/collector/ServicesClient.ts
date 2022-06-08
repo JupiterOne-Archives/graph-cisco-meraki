@@ -1,3 +1,4 @@
+import { IntegrationLogger } from '@jupiterone/integration-sdk-core';
 import meraki = require('meraki');
 import {
   MerakiOrganization,
@@ -16,6 +17,7 @@ export type ResourceIteratee<T> = (resource: T) => void | Promise<void>;
 
 export interface ServicesClientInput {
   apiKey: string;
+  logger: IntegrationLogger;
 }
 
 interface createAuthenticatedAPIRequestInput extends Partial<APIRequest> {
@@ -31,11 +33,13 @@ export class ServicesClient {
   private BASE_URL = 'https://api.meraki.com/api/v1';
   private client: APIClient;
   private readonly apiKey: string;
+  private logger: IntegrationLogger;
 
-  constructor({ apiKey }: ServicesClientInput) {
+  constructor({ apiKey, logger }: ServicesClientInput) {
     meraki.Configuration.xCiscoMerakiAPIKey = apiKey;
     this.client = new APIClient();
     this.apiKey = apiKey;
+    this.logger = logger;
   }
   private createAuthenticatedAPIRequest(
     createAPIInput: createAuthenticatedAPIRequestInput,
@@ -47,17 +51,18 @@ export class ServicesClient {
     };
   }
 
-  async iterateOrganizations(
-    iteratee: ResourceIteratee<MerakiOrganization>,
+  async iterateAll<T>(
+    url: string,
+    iteratee: ResourceIteratee<T>,
   ): Promise<void> {
-    const request = this.createAuthenticatedAPIRequest({
-      url: `${this.BASE_URL}/organizations`,
+    const request: APIRequest = this.createAuthenticatedAPIRequest({
+      url,
     });
 
     const response = await this.client.executeAPIRequest(request);
 
-    for (const organization of response.data) {
-      await iteratee(organization);
+    for (const resource of response.data) {
+      await iteratee(resource);
     }
   }
 
@@ -65,69 +70,41 @@ export class ServicesClient {
     networkId: string,
     iteratee: ResourceIteratee<MerakiDevice>,
   ): Promise<void> {
-    const request: APIRequest = this.createAuthenticatedAPIRequest({
-      url: `${this.BASE_URL}/networks/${networkId}/devices`,
-    });
-
-    const response = await this.client.executeAPIRequest(request);
-
-    for (const device of response.data) {
-      await iteratee(device);
-    }
+    const url = `${this.BASE_URL}/networks/${networkId}/devices`;
+    await this.iterateAll(url, iteratee);
   }
 
   async iterateSamlRoles(
     organizationId: string,
     iteratee: ResourceIteratee<MerakiSamlRole>,
   ): Promise<void> {
-    const request: APIRequest = this.createAuthenticatedAPIRequest({
-      url: `${this.BASE_URL}/organizations/${organizationId}/samlRoles`,
-    });
-
-    const response = await this.client.executeAPIRequest(request);
-
-    for (const samlRole of response.data) {
-      await iteratee(samlRole);
-    }
+    const url = `${this.BASE_URL}/organizations/${organizationId}/samlRoles`;
+    await this.iterateAll(url, iteratee);
   }
 
   async iterateNetworks(
     organizationId: string,
     iteratee: ResourceIteratee<MerakiNetwork>,
   ): Promise<void> {
-    const request: APIRequest = this.createAuthenticatedAPIRequest({
-      url: `${this.BASE_URL}/organizations/${organizationId}/networks`,
-    });
-
-    const response = await this.client.executeAPIRequest(request);
-
-    for (const network of response.data) {
-      await iteratee(network);
-    }
+    const url = `${this.BASE_URL}/organizations/${organizationId}/networks`;
+    await this.iterateAll(url, iteratee);
   }
 
   async iterateAdmins(
     organizationId: string,
     iteratee: ResourceIteratee<MerakiAdminUser>,
   ): Promise<void> {
-    const request: APIRequest = this.createAuthenticatedAPIRequest({
-      url: `${this.BASE_URL}/organizations/${organizationId}/admins`,
-    });
-
-    const response = await this.client.executeAPIRequest(request);
-
-    for (const admin of response.data) {
-      await iteratee(admin);
-    }
+    const url = `${this.BASE_URL}/organizations/${organizationId}/admins`;
+    await this.iterateAll(url, iteratee);
   }
 
   async iterateClients(
     networkId: string,
     iteratee: ResourceIteratee<MerakiClient>,
   ) {
-    const request: APIRequest = this.createAuthenticatedAPIRequest({
-      url: `${this.BASE_URL}/networks/${networkId}/clients`,
-    });
+    const url = `${this.BASE_URL}/networks/${networkId}/clients`;
+
+    const request: APIRequest = this.createAuthenticatedAPIRequest({ url });
 
     try {
       const response = await this.client.executeAPIRequest(request);
@@ -143,6 +120,11 @@ export class ServicesClient {
       // we just throw an error and move on.
       if (err.status !== 400 || err.status !== 404) {
         throw err;
+      } else {
+        this.logger.debug(
+          { url: url, status: err.status },
+          'Skipping over failed request',
+        );
       }
     }
   }
@@ -151,23 +133,17 @@ export class ServicesClient {
     networkId: string,
     iteratee: ResourceIteratee<MerakiSSID>,
   ): Promise<void> {
-    const request: APIRequest = this.createAuthenticatedAPIRequest({
-      url: `${this.BASE_URL}/networks/${networkId}/wireless/ssids`,
-    });
-
-    const response = await this.client.executeAPIRequest(request);
-
-    for (const ssid of response.data) {
-      await iteratee(ssid);
-    }
+    const url = `${this.BASE_URL}/networks/${networkId}/wireless/ssids`;
+    await this.iterateAll(url, iteratee);
   }
 
   async iterateVlans(
     networkId: string,
     iteratee: ResourceIteratee<MerakiVlan>,
   ): Promise<void> {
+    const url = `${this.BASE_URL}/networks/${networkId}/appliance/vlans`;
     const request: APIRequest = this.createAuthenticatedAPIRequest({
-      url: `${this.BASE_URL}/networks/${networkId}/appliance/vlans`,
+      url,
     });
 
     // TODO: @zemberdotnet
@@ -182,7 +158,14 @@ export class ServicesClient {
         await iteratee(vlan);
       }
     } catch (err) {
-      // Do nothing
+      // Ignore 400s because of possible product incompatibility
+      if (err.status !== 400) {
+        this.logger.debug(
+          { url },
+          'Unable to fetch VLANs. Likely due to non-MX network',
+        );
+        throw err;
+      }
     }
   }
 

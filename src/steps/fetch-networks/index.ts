@@ -26,9 +26,10 @@ export const networkSteps = [
 
 export async function fetchNetworks({
   instance,
+  logger,
   jobState,
 }: IntegrationStepExecutionContext<IntegrationConfig>): Promise<void> {
-  const client = createServicesClient(instance);
+  const client = createServicesClient(instance.config, logger);
   await jobState.iterateEntities(
     { _type: Entities.ORGANIZATION._type },
     async (organizationEntity) => {
