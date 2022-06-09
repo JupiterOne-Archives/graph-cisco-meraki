@@ -61,7 +61,10 @@ export const convertAdminUser = (
     // true and should be tested manually with a real response. If incompatible,
     // apply transformations to the tags to make them compatible.
     entityData: {
-      source: data,
+      source: {
+        ...data,
+        tags: [],
+      },
       assign: {
         _key: createEntityKey(Entities.ADMIN._type, data.id),
         _type: Entities.ADMIN._type,
@@ -97,7 +100,10 @@ export const convertSamlRole = (
     // apply transformations to the tags to make them compatible.
     // alternatively, we should look at changes in the sdk
     entityData: {
-      source: data,
+      source: {
+        ...data,
+        tags: [],
+      },
       assign: {
         _key: createEntityKey(Entities.SAML_ROLE._type, data.id),
         _type: Entities.SAML_ROLE._type,
@@ -123,7 +129,10 @@ export const convertNetwork = (
     // apply transformations to the tags to make them compatible.
     // alternatively, we should look at changes in the sdk
     entityData: {
-      source: data,
+      source: {
+        ...data,
+        tags: [],
+      },
       assign: {
         _key: createEntityKey(Entities.NETWORK._type, data.id),
         _type: Entities.NETWORK._type,
@@ -136,6 +145,7 @@ export const convertNetwork = (
         notes: data.notes,
         type: getNetworkType(data),
         productTypes: data.productTypes,
+        tags: data.tags,
       },
     },
   });
@@ -214,7 +224,10 @@ export const convertDevice = (
     // alternatively, we should look at changes in the sdk
 
     entityData: {
-      source: data,
+      source: {
+        ...data,
+        tags: [],
+      },
       assign: {
         _key: createEntityKey(
           Entities.DEVICE._type,
@@ -256,6 +269,8 @@ export const convertDevice = (
         wanIp: data.wanIp,
         wan1Ip: data.wan1Ip,
         wan2Ip: data.wan2Ip,
+
+        tags: data.tags,
       },
     },
   });

@@ -1,4 +1,7 @@
-import { IntegrationLogger } from '@jupiterone/integration-sdk-core';
+import {
+  IntegrationLogger,
+  IntegrationProviderAPIError,
+} from '@jupiterone/integration-sdk-core';
 import {
   MerakiOrganization,
   MerakiNetwork,
@@ -37,18 +40,25 @@ export class ServicesClient {
     url: string,
     iteratee: ResourceIteratee<T>,
   ): Promise<void> {
-    // Data is a T array
-    const response = await request<T[]>({
-      baseURL: this.BASE_URL,
-      url: url,
-      responseType: 'json',
-      headers: {
-        'X-Cisco-Meraki-API-Key': this.apiKey,
-      },
-    });
+    try {
+      const response = await request<T[]>({
+        baseURL: this.BASE_URL,
+        url: url,
+        responseType: 'json',
+        headers: {
+          'X-Cisco-Meraki-API-Key': this.apiKey,
+        },
+      });
 
-    for (const resource of response.data) {
-      await iteratee(resource);
+      for (const resource of response.data) {
+        await iteratee(resource);
+      }
+    } catch (err) {
+      throw new IntegrationProviderAPIError({
+        endpoint: this.BASE_URL + url,
+        status: err.response?.status,
+        statusText: err.response?.statusText,
+      });
     }
   }
 
@@ -88,7 +98,7 @@ export class ServicesClient {
     networkId: string,
     iteratee: ResourceIteratee<MerakiClient>,
   ) {
-    const url = `${this.BASE_URL}/networks/${networkId}/clients`;
+    const url = `/networks/${networkId}/clients`;
 
     try {
       const response = await request<MerakiClient>({
@@ -111,7 +121,11 @@ export class ServicesClient {
       // Skipping over 404 and 400s is seen in other integrations, but often
       // we just throw an error and move on.
       if (err.response.status !== 400 || err.response.status !== 404) {
-        throw err;
+        throw new IntegrationProviderAPIError({
+          endpoint: this.BASE_URL + url,
+          status: err.response?.status,
+          statusText: err.response?.statusText,
+        });
       } else {
         this.logger.debug(
           { url: url, status: err.status },
@@ -133,7 +147,7 @@ export class ServicesClient {
     networkId: string,
     iteratee: ResourceIteratee<MerakiVlan>,
   ): Promise<void> {
-    const url = `${this.BASE_URL}/networks/${networkId}/appliance/vlans`;
+    const url = `/networks/${networkId}/appliance/vlans`;
 
     // TODO: @zemberdotnet
     // This is a hack around the fact that it's unclear how to distinguish
@@ -153,12 +167,16 @@ export class ServicesClient {
       }
     } catch (err) {
       // Ignore 400s because of possible product incompatibility
-      if (err.status !== 400) {
+      if (err.response.status !== 400) {
         this.logger.debug(
           { url },
           'Unable to fetch VLANs. Likely due to non-MX network',
         );
-        throw err;
+        throw new IntegrationProviderAPIError({
+          endpoint: this.BASE_URL + url,
+          status: err.response?.status,
+          statusText: err.response?.statusText,
+        });
       }
     }
   }
@@ -167,13 +185,20 @@ export class ServicesClient {
    * Get Organizations
    */
   async getOrganizations(): Promise<MerakiOrganization[]> {
-    const response = await request<MerakiOrganization[]>({
-      baseURL: this.BASE_URL,
-      url: '/organizations',
-      responseType: 'json',
-      headers: { 'X-Cisco-Meraki-API-Key': this.apiKey },
-    });
-
-    return response.data;
+    try {
+      const response = await request<MerakiOrganization[]>({
+        baseURL: this.BASE_URL,
+        url: '/organizations',
+        responseType: 'json',
+        headers: { 'X-Cisco-Meraki-API-Key': this.apiKey },
+      });
+      return response.data;
+    } catch (err) {
+      throw new IntegrationProviderAPIError({
+        endpoint: this.BASE_URL + '/organizations',
+        status: err.response?.status,
+        statusText: err.response?.statusText,
+      });
+    }
   }
 }
