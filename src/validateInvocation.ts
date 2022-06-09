@@ -2,7 +2,6 @@ import {
   IntegrationExecutionContext,
   IntegrationProviderAPIError,
   IntegrationProviderAuthenticationError,
-  IntegrationProviderAuthorizationError,
   IntegrationValidationError,
 } from '@jupiterone/integration-sdk-core';
 

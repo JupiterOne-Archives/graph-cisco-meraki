@@ -31,6 +31,7 @@
   },
   "dependencies": {
     "@lifeomic/attempt": "^3.0.3",
+    "gaxios": "^5.0.0",
     "meraki": "^1.5.0",
     "node-fetch": "^2.6.0"
   },

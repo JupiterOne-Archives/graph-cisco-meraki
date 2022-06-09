@@ -1,5 +1,4 @@
 import { IntegrationLogger } from '@jupiterone/integration-sdk-core';
-import meraki = require('meraki');
 import {
   MerakiOrganization,
   MerakiNetwork,
@@ -10,18 +9,13 @@ import {
   MerakiSamlRole,
   MerakiSSID,
 } from '.';
-import { APIClient } from '../client';
-import { APIRequest } from '../client/types';
+import { request } from 'gaxios';
 
 export type ResourceIteratee<T> = (resource: T) => void | Promise<void>;
 
 export interface ServicesClientInput {
   apiKey: string;
   logger: IntegrationLogger;
-}
-
-interface createAuthenticatedAPIRequestInput extends Partial<APIRequest> {
-  url: string;
 }
 
 /**
@@ -31,35 +25,27 @@ interface createAuthenticatedAPIRequestInput extends Partial<APIRequest> {
  */
 export class ServicesClient {
   private BASE_URL = 'https://api.meraki.com/api/v1';
-  private client: APIClient;
   private readonly apiKey: string;
   private logger: IntegrationLogger;
 
   constructor({ apiKey, logger }: ServicesClientInput) {
-    meraki.Configuration.xCiscoMerakiAPIKey = apiKey;
-    this.client = new APIClient();
     this.apiKey = apiKey;
     this.logger = logger;
-  }
-  private createAuthenticatedAPIRequest(
-    createAPIInput: createAuthenticatedAPIRequestInput,
-  ): APIRequest {
-    return {
-      method: 'GET',
-      headers: { 'X-Cisco-Meraki-API-Key': this.apiKey },
-      ...createAPIInput,
-    };
   }
 
   async iterateAll<T>(
     url: string,
     iteratee: ResourceIteratee<T>,
   ): Promise<void> {
-    const request: APIRequest = this.createAuthenticatedAPIRequest({
-      url,
+    // Data is a T array
+    const response = await request<T[]>({
+      baseURL: this.BASE_URL,
+      url: url,
+      responseType: 'json',
+      headers: {
+        'X-Cisco-Meraki-API-Key': this.apiKey,
+      },
     });
-
-    const response = await this.client.executeAPIRequest(request);
 
     for (const resource of response.data) {
       await iteratee(resource);
@@ -70,7 +56,7 @@ export class ServicesClient {
     networkId: string,
     iteratee: ResourceIteratee<MerakiDevice>,
   ): Promise<void> {
-    const url = `${this.BASE_URL}/networks/${networkId}/devices`;
+    const url = `/networks/${networkId}/devices`;
     await this.iterateAll(url, iteratee);
   }
 
@@ -78,7 +64,7 @@ export class ServicesClient {
     organizationId: string,
     iteratee: ResourceIteratee<MerakiSamlRole>,
   ): Promise<void> {
-    const url = `${this.BASE_URL}/organizations/${organizationId}/samlRoles`;
+    const url = `/organizations/${organizationId}/samlRoles`;
     await this.iterateAll(url, iteratee);
   }
 
@@ -86,7 +72,7 @@ export class ServicesClient {
     organizationId: string,
     iteratee: ResourceIteratee<MerakiNetwork>,
   ): Promise<void> {
-    const url = `${this.BASE_URL}/organizations/${organizationId}/networks`;
+    const url = `/organizations/${organizationId}/networks`;
     await this.iterateAll(url, iteratee);
   }
 
@@ -94,7 +80,7 @@ export class ServicesClient {
     organizationId: string,
     iteratee: ResourceIteratee<MerakiAdminUser>,
   ): Promise<void> {
-    const url = `${this.BASE_URL}/organizations/${organizationId}/admins`;
+    const url = `/organizations/${organizationId}/admins`;
     await this.iterateAll(url, iteratee);
   }
 
@@ -104,13 +90,19 @@ export class ServicesClient {
   ) {
     const url = `${this.BASE_URL}/networks/${networkId}/clients`;
 
-    const request: APIRequest = this.createAuthenticatedAPIRequest({ url });
-
     try {
-      const response = await this.client.executeAPIRequest(request);
-
-      for (const client of response.data) {
-        await iteratee(client);
+      const response = await request<MerakiClient>({
+        baseURL: this.BASE_URL,
+        url: url,
+        responseType: 'json',
+        headers: {
+          'X-Cisco-Meraki-API-Key': this.apiKey,
+        },
+      });
+      if (Array.isArray(response)) {
+        for (const client of response) {
+          await iteratee(client);
+        }
       }
     } catch (err) {
       // This is specific logic in place from the first version of this integration
@@ -118,7 +110,7 @@ export class ServicesClient {
       // we don't have good patterns in place for partial failures.
       // Skipping over 404 and 400s is seen in other integrations, but often
       // we just throw an error and move on.
-      if (err.status !== 400 || err.status !== 404) {
+      if (err.response.status !== 400 || err.response.status !== 404) {
         throw err;
       } else {
         this.logger.debug(
@@ -133,7 +125,7 @@ export class ServicesClient {
     networkId: string,
     iteratee: ResourceIteratee<MerakiSSID>,
   ): Promise<void> {
-    const url = `${this.BASE_URL}/networks/${networkId}/wireless/ssids`;
+    const url = `/networks/${networkId}/wireless/ssids`;
     await this.iterateAll(url, iteratee);
   }
 
@@ -142,9 +134,6 @@ export class ServicesClient {
     iteratee: ResourceIteratee<MerakiVlan>,
   ): Promise<void> {
     const url = `${this.BASE_URL}/networks/${networkId}/appliance/vlans`;
-    const request: APIRequest = this.createAuthenticatedAPIRequest({
-      url,
-    });
 
     // TODO: @zemberdotnet
     // This is a hack around the fact that it's unclear how to distinguish
@@ -152,7 +141,12 @@ export class ServicesClient {
     // we should extract it into a utility function and add it into the actual
     // step to not hide this logic.
     try {
-      const response = await this.client.executeAPIRequest(request);
+      const response = await request<MerakiVlan[]>({
+        baseURL: this.BASE_URL,
+        url: url,
+        responseType: 'json',
+        headers: { 'X-Cisco-Meraki-API-Key': this.apiKey },
+      });
 
       for (const vlan of response.data) {
         await iteratee(vlan);
@@ -173,11 +167,12 @@ export class ServicesClient {
    * Get Organizations
    */
   async getOrganizations(): Promise<MerakiOrganization[]> {
-    const request: APIRequest = this.createAuthenticatedAPIRequest({
-      url: `${this.BASE_URL}/organizations`,
+    const response = await request<MerakiOrganization[]>({
+      baseURL: this.BASE_URL,
+      url: '/organizations',
+      responseType: 'json',
+      headers: { 'X-Cisco-Meraki-API-Key': this.apiKey },
     });
-
-    const response = await this.client.executeAPIRequest(request);
 
     return response.data;
   }
