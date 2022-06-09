@@ -119,8 +119,8 @@ export const convertSamlRole = (
 
 export const convertNetwork = (
   data: MerakiNetwork,
-): ReturnType<typeof createIntegrationEntity> =>
-  createIntegrationEntity({
+): ReturnType<typeof createIntegrationEntity> => {
+  const networkEntity = createIntegrationEntity({
     // TODO: @zemberdotnet
     // We need to test that the tags supplied by the API will work with the
     // J1 Tagging system. Based on current typings from example responses from the
@@ -145,10 +145,17 @@ export const convertNetwork = (
         notes: data.notes,
         type: getNetworkType(data),
         productTypes: data.productTypes,
-        tags: data.tags,
       },
     },
   });
+  // HACK: The integration SDK removes tag properties and converts them
+  // however this used to use convert properties and had tags
+  // this is here for continuity
+  if (data.tags?.length > 0) {
+    networkEntity.tags = data.tags;
+  }
+  return networkEntity;
+};
 
 export const convertSSID = (
   data: MerakiSSID,
@@ -213,8 +220,8 @@ export const convertVlan = (
 
 export const convertDevice = (
   data: MerakiDevice,
-): ReturnType<typeof createIntegrationEntity> =>
-  createIntegrationEntity({
+): ReturnType<typeof createIntegrationEntity> => {
+  const deviceEntity = createIntegrationEntity({
     // TODO: @zemberdotnet
     // We need to test that the tags supplied by the API will work with the
     // J1 Tagging system. Based on current typings from example responses from the
@@ -269,11 +276,18 @@ export const convertDevice = (
         wanIp: data.wanIp,
         wan1Ip: data.wan1Ip,
         wan2Ip: data.wan2Ip,
-
-        tags: data.tags,
       },
     },
   });
+  // HACK: The integration SDK removes tag properties and converts them
+  // however this used to use convert properties and had tags
+  // this is here for continuity
+
+  if (data.tags?.length > 0) {
+    deviceEntity.tags = data.tags;
+  }
+  return deviceEntity;
+};
 
 function getPublicIp(data: MerakiDevice): string | undefined {
   if (data.wanIp) {

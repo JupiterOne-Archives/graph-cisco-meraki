@@ -101,7 +101,7 @@ export class ServicesClient {
     const url = `/networks/${networkId}/clients`;
 
     try {
-      const response = await request<MerakiClient>({
+      const response = await request<MerakiClient[]>({
         baseURL: this.BASE_URL,
         url: url,
         responseType: 'json',
@@ -109,10 +109,8 @@ export class ServicesClient {
           'X-Cisco-Meraki-API-Key': this.apiKey,
         },
       });
-      if (Array.isArray(response)) {
-        for (const client of response) {
-          await iteratee(client);
-        }
+      for (const client of response.data) {
+        await iteratee(client);
       }
     } catch (err) {
       // This is specific logic in place from the first version of this integration
@@ -127,7 +125,7 @@ export class ServicesClient {
           statusText: err.response?.statusText,
         });
       } else {
-        this.logger.debug(
+        this.logger.info(
           { url: url, status: err.status },
           'Skipping over failed request',
         );
