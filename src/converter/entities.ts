@@ -302,8 +302,8 @@ function getPublicIp(data: MerakiDevice): string | undefined {
   return undefined;
 }
 
-function getNetworkType(data: MerakiNetwork): string {
-  if (!data.productTypes) {
+export function getNetworkType(data: MerakiNetwork): string {
+  if (!data.productTypes || data.productTypes.length === 0) {
     return 'unknown';
   } else if (data.productTypes.length === 1) {
     return data.productTypes[0];
