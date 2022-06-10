@@ -37,13 +37,15 @@ export class ServicesClient {
   }
 
   async iterateAll<T>(
-    url: string,
     iteratee: ResourceIteratee<T>,
+    url: string,
+    params?: any,
   ): Promise<void> {
     try {
       const response = await request<T[]>({
         baseURL: this.BASE_URL,
         url: url,
+        params: params,
         responseType: 'json',
         headers: {
           'X-Cisco-Meraki-API-Key': this.apiKey,
@@ -62,38 +64,68 @@ export class ServicesClient {
     }
   }
 
+  /**
+   * iterateDevices iterates all devices in a network
+   * @url https://developer.cisco.com/meraki/api-v1/#!get-network-devices
+   * @param networkId the network id
+   * @param iteratee  the iteratee callback function
+   */
   async iterateDevices(
     networkId: string,
     iteratee: ResourceIteratee<MerakiDevice>,
   ): Promise<void> {
     const url = `/networks/${networkId}/devices`;
-    await this.iterateAll(url, iteratee);
+    await this.iterateAll(iteratee, url);
   }
 
+  /**
+   * iterateSamlRoles iterates all SAML roles in a network
+   * @url https://developer.cisco.com/meraki/api-v1/#!get-organization-saml-roles
+   * @param organizationId the organization id
+   * @param iteratee  the iteratee callback function
+   */
   async iterateSamlRoles(
     organizationId: string,
     iteratee: ResourceIteratee<MerakiSamlRole>,
   ): Promise<void> {
     const url = `/organizations/${organizationId}/samlRoles`;
-    await this.iterateAll(url, iteratee);
+    await this.iterateAll(iteratee, url);
   }
 
+  /**
+   * iterateNetworks iterates all networks in an organization
+   * @url https://developer.cisco.com/meraki/api-v1/#!get-organization-networks
+   * @param organizationId the organization id
+   * @param iteratee  the iteratee callback function
+   */
   async iterateNetworks(
     organizationId: string,
     iteratee: ResourceIteratee<MerakiNetwork>,
   ): Promise<void> {
     const url = `/organizations/${organizationId}/networks`;
-    await this.iterateAll(url, iteratee);
+    await this.iterateAll(iteratee, url);
   }
 
+  /**
+   * iterateAdmins iterates all admins in a network
+   * @url https://developer.cisco.com/meraki/api-v1/#!get-organization-admins
+   * @param organizationId the organization id
+   * @param iteratee  the iteratee callback function
+   */
   async iterateAdmins(
     organizationId: string,
     iteratee: ResourceIteratee<MerakiAdminUser>,
   ): Promise<void> {
     const url = `/organizations/${organizationId}/admins`;
-    await this.iterateAll(url, iteratee);
+    await this.iterateAll(iteratee, url);
   }
 
+  /**
+   * iterateClients iterates all clients in a network
+   * @url https://developer.cisco.com/meraki/api-v1/#!get-network-clients
+   * @param networkId the network id
+   * @param iteratee  the iteratee callback function
+   */
   async iterateClients(
     networkId: string,
     iteratee: ResourceIteratee<MerakiClient>,
@@ -133,14 +165,26 @@ export class ServicesClient {
     }
   }
 
+  /**
+   * iterateSSIDs iterates all SSIDs in a network
+   * @url https://developer.cisco.com/meraki/api-v1/#!get-network-wireless-ssids
+   * @param networkId the network id
+   * @param iteratee the iteratee callback function
+   */
   async iterateSSIDs(
     networkId: string,
     iteratee: ResourceIteratee<MerakiSSID>,
   ): Promise<void> {
     const url = `/networks/${networkId}/wireless/ssids`;
-    await this.iterateAll(url, iteratee);
+    await this.iterateAll(iteratee, url);
   }
 
+  /**
+   * iterateVlans iterates all vlans in a network
+   * @url https://developer.cisco.com/meraki/api-v1/#!get-network-appliance-vlans
+   * @param networkId the network id
+   * @param iteratee  the iteratee callback function
+   */
   async iterateVlans(
     networkId: string,
     iteratee: ResourceIteratee<MerakiVlan>,
@@ -181,6 +225,7 @@ export class ServicesClient {
 
   /**
    * Get Organizations
+   * @url https://developer.cisco.com/meraki/api-v1/#!get-organizations
    */
   async getOrganizations(): Promise<MerakiOrganization[]> {
     try {
