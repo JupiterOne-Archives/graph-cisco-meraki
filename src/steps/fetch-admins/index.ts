@@ -4,7 +4,11 @@ import {
   IntegrationStepExecutionContext,
   RelationshipClass,
 } from '@jupiterone/integration-sdk-core';
-import { createServicesClient, MerakiOrganization } from '../../collector';
+import {
+  createServicesClient,
+  MerakiAdminUser,
+  MerakiOrganization,
+} from '../../collector';
 import { Entities, Relationships, StepIds } from '../../constants';
 import { convertAdminUser } from '../../converter';
 import { IntegrationConfig } from '../../config';
@@ -22,28 +26,30 @@ export const adminSteps = [
 
 export async function fetchAdmins({
   instance,
+  logger,
   jobState,
 }: IntegrationStepExecutionContext<IntegrationConfig>) {
-  const client = createServicesClient(instance);
+  const client = createServicesClient(instance.config, logger);
 
   await jobState.iterateEntities(
     { _type: Entities.ORGANIZATION._type },
     async (organizationEntity) => {
       const organization = getRawData(organizationEntity) as MerakiOrganization;
-      const admins = await client.getAdmins(organization.id);
-      const adminEntities = await jobState.addEntities(
-        admins.map(convertAdminUser),
-      );
 
-      for (const adminEntity of adminEntities) {
-        await jobState.addRelationship(
-          createDirectRelationship({
-            from: organizationEntity,
-            to: adminEntity,
-            _class: RelationshipClass.HAS,
-          }),
-        );
-      }
+      await client.iterateAdmins(
+        organization.id,
+        async (admin: MerakiAdminUser) => {
+          const adminEntity = await jobState.addEntity(convertAdminUser(admin));
+
+          await jobState.addRelationship(
+            createDirectRelationship({
+              from: organizationEntity,
+              to: adminEntity,
+              _class: RelationshipClass.HAS,
+            }),
+          );
+        },
+      );
     },
   );
 }

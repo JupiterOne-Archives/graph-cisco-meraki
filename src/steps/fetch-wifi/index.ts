@@ -4,7 +4,11 @@ import {
   IntegrationStepExecutionContext,
   RelationshipClass,
 } from '@jupiterone/integration-sdk-core';
-import { createServicesClient, MerakiNetwork } from '../../collector';
+import {
+  createServicesClient,
+  MerakiNetwork,
+  MerakiSSID,
+} from '../../collector';
 import { Entities, Relationships, StepIds } from '../../constants';
 import { convertSSID } from '../../converter';
 import { IntegrationConfig } from '../../config';
@@ -20,21 +24,21 @@ export const wifiSteps = [
   },
 ];
 
+const isWirelessNetwork = (network: MerakiNetwork) =>
+  network.productTypes.includes('wireless');
+
 export async function fetchWifi({
   instance,
+  logger,
   jobState,
 }: IntegrationStepExecutionContext<IntegrationConfig>) {
-  const client = createServicesClient(instance);
+  const client = createServicesClient(instance.config, logger);
   await jobState.iterateEntities(
     { _type: Entities.NETWORK._type },
     async (networkEntity) => {
-      if (networkEntity.type === 'wireless') {
-        const network = getRawData(networkEntity) as MerakiNetwork;
-
-        const ssids = await client.getSSIDs(network.id);
-        // TODO convert to iterateEntities pattern when client supports it
-
-        for (const ssid of ssids) {
+      const network = getRawData(networkEntity) as MerakiNetwork;
+      if (isWirelessNetwork(network)) {
+        await client.iterateSSIDs(network.id, async (ssid: MerakiSSID) => {
           if (!ssid.name.startsWith('Unconfigured')) {
             ssid.psk = 'REDACTED';
             const ssidEntity = await jobState.addEntity(
@@ -49,7 +53,7 @@ export async function fetchWifi({
               }),
             );
           }
-        }
+        });
       }
     },
   );

@@ -4,7 +4,11 @@ import {
   IntegrationStepExecutionContext,
   RelationshipClass,
 } from '@jupiterone/integration-sdk-core';
-import { createServicesClient, MerakiOrganization } from '../../collector';
+import {
+  createServicesClient,
+  MerakiNetwork,
+  MerakiOrganization,
+} from '../../collector';
 import { Entities, Relationships, StepIds } from '../../constants';
 import { convertNetwork } from '../../converter';
 import { IntegrationConfig } from '../../config';
@@ -22,28 +26,30 @@ export const networkSteps = [
 
 export async function fetchNetworks({
   instance,
+  logger,
   jobState,
 }: IntegrationStepExecutionContext<IntegrationConfig>): Promise<void> {
-  const client = createServicesClient(instance);
+  const client = createServicesClient(instance.config, logger);
   await jobState.iterateEntities(
     { _type: Entities.ORGANIZATION._type },
     async (organizationEntity) => {
       const organization = getRawData(organizationEntity) as MerakiOrganization;
-      const networks = await client.getNetworks(organization.id);
+      await client.iterateNetworks(
+        organization.id,
+        async (network: MerakiNetwork) => {
+          const networkEntity = await jobState.addEntity(
+            convertNetwork(network),
+          );
 
-      const networkEntities = await jobState.addEntities(
-        networks.map(convertNetwork),
+          await jobState.addRelationship(
+            createDirectRelationship({
+              from: organizationEntity,
+              to: networkEntity,
+              _class: RelationshipClass.HAS,
+            }),
+          );
+        },
       );
-
-      for (const networkEntity of networkEntities) {
-        await jobState.addRelationship(
-          createDirectRelationship({
-            from: organizationEntity,
-            to: networkEntity,
-            _class: RelationshipClass.HAS,
-          }),
-        );
-      }
     },
   );
 }

@@ -1,6 +1,6 @@
 import { IntegrationConfig } from '../config';
 
-import { IntegrationInstance } from '@jupiterone/integration-sdk-core';
+import { IntegrationLogger } from '@jupiterone/integration-sdk-core';
 
 import { ServicesClient } from './ServicesClient';
 
@@ -11,15 +11,11 @@ export * from './types';
  * api key.
  */
 export function createServicesClient(
-  instance: IntegrationInstance<IntegrationConfig>,
+  config: IntegrationConfig,
+  logger: IntegrationLogger,
 ): ServicesClient {
-  const apiKey = instance.config.apiKey;
-
-  if (!apiKey) {
-    throw new Error(
-      'Configuration option "apiKey" is missing on the integration instance config',
-    );
-  }
-
-  return new ServicesClient({ apiKey });
+  return new ServicesClient({
+    apiKey: config.apiKey,
+    logger: logger,
+  });
 }

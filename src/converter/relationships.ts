@@ -2,7 +2,7 @@ import { MerakiClient } from '../collector';
 import {
   convertProperties,
   createMappedRelationship,
-  getTime,
+  parseTimePropertyValue,
   Relationship,
   RelationshipClass,
   RelationshipDirection,
@@ -31,8 +31,8 @@ export const convertNetworkClientRelationship = (
         displayName: client.description || client.mac,
         macAddress: client.mac,
         ipAddress: client.ip,
-        firstSeenOn: getTime(client.firstSeen),
-        lastSeenOn: getTime(client.lastSeen),
+        firstSeenOn: parseTimePropertyValue(client.firstSeen),
+        lastSeenOn: parseTimePropertyValue(client.lastSeen),
       },
     },
   });

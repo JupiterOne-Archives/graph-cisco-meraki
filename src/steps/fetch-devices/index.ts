@@ -7,7 +7,11 @@ import {
   RelationshipClass,
   RelationshipDirection,
 } from '@jupiterone/integration-sdk-core';
-import { createServicesClient, MerakiNetwork } from '../../collector';
+import {
+  createServicesClient,
+  MerakiDevice,
+  MerakiNetwork,
+} from '../../collector';
 import {
   Entities,
   MappedRelationships,
@@ -31,20 +35,16 @@ export const deviceSteps = [
 
 export async function fetchDevices({
   instance,
+  logger,
   jobState,
 }: IntegrationStepExecutionContext<IntegrationConfig>) {
-  const client = createServicesClient(instance);
+  const client = createServicesClient(instance.config, logger);
   await jobState.iterateEntities(
     { _type: Entities.NETWORK._type },
     async (networkEntity) => {
       const network = getRawData(networkEntity) as MerakiNetwork;
-      const devices = await client.getDevices(network.id);
-
-      const deviceEntities = await jobState.addEntities(
-        devices.map(convertDevice),
-      );
-
-      for (const deviceEntity of deviceEntities) {
+      await client.iterateDevices(network.id, async (device: MerakiDevice) => {
+        const deviceEntity = await jobState.addEntity(convertDevice(device));
         await jobState.addRelationship(
           createDirectRelationship({
             from: networkEntity,
@@ -67,7 +67,7 @@ export async function fetchDevices({
             }),
           );
         }
-      }
+      });
     },
   );
 }

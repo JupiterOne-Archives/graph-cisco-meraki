@@ -1,4 +1,5 @@
 import {
+  mutations,
   Recording,
   setupRecording as sdkSetupRecording,
   SetupRecordingInput,
@@ -37,6 +38,7 @@ export function setupMerakiRecording(
 }
 
 function redact(entry): void {
+  mutations.unzipGzippedRecordingEntry(entry);
   const DEFAULT_REDACT = '[REDACTED]';
   const keysToRedactMap = new Map();
 
@@ -49,13 +51,9 @@ function redact(entry): void {
     header.value.includes('application/json');
 
   const isJsonResponse = entry.response.headers.reduce(
-    (flattenedValue, currentValue) => {
-      return (
-        (isContentTypeHeader(currentValue) &&
-          isApplicationJson(currentValue)) ||
-        flattenedValue
-      );
-    },
+    (flattenedValue: Boolean, currentValue: Object) =>
+      flattenedValue ||
+      (isContentTypeHeader(currentValue) && isApplicationJson(currentValue)),
     false,
   );
 
