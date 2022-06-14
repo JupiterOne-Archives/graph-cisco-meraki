@@ -8,6 +8,14 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 3.0.0 - 2022-05-14
+
+### Changed
+
+- `fetch-resources` step now broken into several smaller steps
+- removed most use of `convertProperties`
+- upgraded to API `v1`
+
 ## 2.2.2 - 2022-03-24
 
 ### Added
