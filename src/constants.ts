@@ -2,6 +2,7 @@ import { RelationshipClass } from '@jupiterone/data-model';
 import {
   RelationshipDirection,
   StepEntityMetadata,
+  StepMappedRelationshipMetadata,
 } from '@jupiterone/integration-sdk-core';
 
 export const StepIds = {
@@ -129,7 +130,10 @@ export const TargetEntities = {
   },
 };
 
-export const MappedRelationships = {
+export const MappedRelationships: Record<
+  'DEVICE_CONNECTS_INTERNET' | 'NETWORK_HAS_CLIENT',
+  StepMappedRelationshipMetadata
+> = {
   DEVICE_CONNECTS_INTERNET: {
     _type: 'meraki_device_connects_internet',
     sourceType: Entities.DEVICE._type,
@@ -140,13 +144,6 @@ export const MappedRelationships = {
   NETWORK_HAS_CLIENT: {
     _type: 'meraki_network_has_client',
     sourceType: Entities.NETWORK._type,
-    _class: RelationshipClass.HAS,
-    targetType: 'host',
-    direction: RelationshipDirection.FORWARD,
-  },
-  VLAN_HAS_CLIENT: {
-    _type: 'meraki_vlan_has_client',
-    sourceType: Entities.VLAN._type,
     _class: RelationshipClass.HAS,
     targetType: 'host',
     direction: RelationshipDirection.FORWARD,

@@ -159,7 +159,7 @@ export class ServicesClient {
     organizationId: string,
     iteratee: ResourceIteratee<MerakiNetwork>,
   ): Promise<void> {
-    const url = `${this.BASE_URL}/organizations/${organizationId}/networks`;
+    const url = `/organizations/${organizationId}/networks`;
 
     await this.iterateAll(url, iteratee, { perPage: 50 });
   }
