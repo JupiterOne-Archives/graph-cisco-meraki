@@ -244,7 +244,7 @@ export const convertDevice = (
         _class: Entities.DEVICE._class,
         category: 'network',
         make: 'Cisco Meraki',
-        name: data.name,
+        name: data.name ?? data.networkId,
         displayName: data.name,
         hostname: data.name,
         macAddress: data.mac,
@@ -269,7 +269,6 @@ export const convertDevice = (
         url: data.url,
         webLink: data.url,
 
-        // this doesn't follow the data model, notes should be string[]
         notes: data.notes,
 
         lanIp: data.lanIp,

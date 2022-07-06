@@ -21,10 +21,7 @@ export const clientSteps: IntegrationStep<IntegrationConfig>[] = [
     name: 'Fetch Meraki Network Clients',
     entities: [],
     relationships: [],
-    mappedRelationships: [
-      MappedRelationships.NETWORK_HAS_CLIENT,
-      MappedRelationships.VLAN_HAS_CLIENT,
-    ],
+    mappedRelationships: [MappedRelationships.NETWORK_HAS_CLIENT],
     dependsOn: [StepIds.FETCH_NETWORKS],
     executionHandler: fetchClients,
   },
@@ -42,7 +39,7 @@ export async function fetchClients({
       const network = getRawData(networkEntity) as MerakiNetwork;
       await client.iterateClients(network.id, async (client: MerakiClient) => {
         await jobState.addRelationship(
-          convertNetworkClientRelationship(network.id, client),
+          convertNetworkClientRelationship(networkEntity, client),
         );
       });
     },

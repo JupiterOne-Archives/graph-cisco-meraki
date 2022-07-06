@@ -42,7 +42,7 @@ function redact(entry): void {
   const DEFAULT_REDACT = '[REDACTED]';
   const keysToRedactMap = new Map();
 
-  keysToRedactMap.set('url', DEFAULT_REDACT);
+  keysToRedactMap.set('url', 'http://redactedurl.com');
   keysToRedactMap.set('samlConsumerUrl', DEFAULT_REDACT);
   keysToRedactMap.set('samlConsumerUrls', [DEFAULT_REDACT]);
 
