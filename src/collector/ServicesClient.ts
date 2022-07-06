@@ -179,6 +179,13 @@ export class ServicesClient {
     await this.iterateAll(url, iteratee);
   }
 
+  /**
+   * iterateClients iterates all clients in a network
+   * @url https://developer.cisco.com/meraki/api-v1/#!get-network-clients
+   * @paginated true
+   * @param networkId the network id
+   * @param iteratee the iteratee callback function
+   */
   async iterateClients(
     networkId: string,
     iteratee: ResourceIteratee<MerakiClient>,
