@@ -1,6 +1,8 @@
 import {
   IntegrationLogger,
   IntegrationProviderAPIError,
+  IntegrationProviderAuthorizationError,
+  IntegrationProviderAuthenticationError,
 } from '@jupiterone/integration-sdk-core';
 import {
   MerakiOrganization,
@@ -12,7 +14,8 @@ import {
   MerakiSamlRole,
   MerakiSSID,
 } from '.';
-import { request } from 'gaxios';
+import { GaxiosError, request } from 'gaxios';
+import parse from 'parse-link-header';
 
 export type ResourceIteratee<T> = (resource: T) => void | Promise<void>;
 
@@ -39,26 +42,69 @@ export class ServicesClient {
   async iterateAll<T>(
     url: string,
     iteratee: ResourceIteratee<T>,
+    params?: any,
   ): Promise<void> {
-    try {
-      const response = await request<T[]>({
-        baseURL: this.BASE_URL,
-        url: url,
-        responseType: 'json',
-        headers: {
-          'X-Cisco-Meraki-API-Key': this.apiKey,
-        },
-      });
+    let nextUrl: string | undefined = this.BASE_URL + url;
 
-      for (const resource of response.data) {
-        await iteratee(resource);
+    do {
+      try {
+        const response = await request<T[]>({
+          url: nextUrl,
+          params: params,
+          responseType: 'json',
+          headers: {
+            'X-Cisco-Meraki-API-Key': this.apiKey,
+          },
+        });
+
+        // after the first request the link header will contain
+        // the params we need
+        params = undefined;
+
+        for (const resource of response.data) {
+          await iteratee(resource);
+        }
+
+        const parsedLinkHeader = parse(response.headers.link);
+        nextUrl = parsedLinkHeader?.next?.url;
+      } catch (err) {
+        if (err instanceof GaxiosError) {
+          throw this.createIntegrationError(
+            err.response?.status as number,
+            err.response?.statusText as string,
+            this.BASE_URL + url,
+          );
+        } else {
+          throw err;
+        }
       }
-    } catch (err) {
-      throw new IntegrationProviderAPIError({
-        endpoint: this.BASE_URL + url,
-        status: err.response?.status,
-        statusText: err.response?.statusText,
-      });
+    } while (nextUrl);
+  }
+
+  private createIntegrationError(
+    status: number,
+    statusText: string,
+    endpoint: string,
+  ) {
+    switch (status) {
+      case 401:
+        return new IntegrationProviderAuthenticationError({
+          status,
+          statusText,
+          endpoint,
+        });
+      case 403:
+        return new IntegrationProviderAuthorizationError({
+          status,
+          statusText,
+          endpoint,
+        });
+      default:
+        return new IntegrationProviderAPIError({
+          status,
+          statusText,
+          endpoint,
+        });
     }
   }
 
