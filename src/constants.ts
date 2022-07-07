@@ -131,7 +131,7 @@ export const TargetEntities = {
 };
 
 export const MappedRelationships: Record<
-  'DEVICE_CONNECTS_INTERNET' | 'NETWORK_HAS_CLIENT',
+  'DEVICE_CONNECTS_INTERNET' | 'NETWORK_HAS_CLIENT' | 'VLAN_HAS_CLIENT',
   StepMappedRelationshipMetadata
 > = {
   DEVICE_CONNECTS_INTERNET: {
@@ -144,6 +144,13 @@ export const MappedRelationships: Record<
   NETWORK_HAS_CLIENT: {
     _type: 'meraki_network_has_client',
     sourceType: Entities.NETWORK._type,
+    _class: RelationshipClass.HAS,
+    targetType: 'host',
+    direction: RelationshipDirection.FORWARD,
+  },
+  VLAN_HAS_CLIENT: {
+    _type: 'meraki_vlan_has_client',
+    sourceType: Entities.VLAN._type,
     _class: RelationshipClass.HAS,
     targetType: 'host',
     direction: RelationshipDirection.FORWARD,

@@ -110,6 +110,7 @@ The following mapped relationships are created:
 | --------------------- | --------------------- | --------------------- | --------- |
 | `meraki_device`       | **CONNECTS**          | `*internet*`          | FORWARD   |
 | `meraki_network`      | **HAS**               | `*host*`              | FORWARD   |
+| `meraki_vlan`         | **HAS**               | `*host*`              | FORWARD   |
 
 <!--
 ********************************************************************************

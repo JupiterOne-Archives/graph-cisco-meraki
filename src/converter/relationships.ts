@@ -29,3 +29,24 @@ export const convertNetworkClientRelationship = (
     },
   });
 };
+
+export const convertVlanClientRelationship = (
+  sourceEntity: Entity,
+  client: MerakiClient,
+): Relationship => {
+  return createMappedRelationship({
+    _class: RelationshipClass.HAS,
+    _type: MappedRelationships.VLAN_HAS_CLIENT._type,
+    source: sourceEntity,
+    targetFilterKeys: [['_class', 'macAddress']],
+    target: {
+      ...convertProperties(client),
+      _class: TargetEntities.CLIENT._class,
+      displayName: client.description || client.mac,
+      macAddress: client.mac,
+      ipAddress: client.ip,
+      firstSeenOn: parseTimePropertyValue(client.firstSeen),
+      lastSeenOn: parseTimePropertyValue(client.lastSeen),
+    },
+  });
+};
