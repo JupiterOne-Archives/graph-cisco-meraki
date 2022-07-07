@@ -24,6 +24,11 @@ export interface ServicesClientInput {
   logger: IntegrationLogger;
 }
 
+type IterateAllOptions = {
+  errHandler?: ErrorHandler;
+  params?: any;
+};
+
 type ErrorHandler = (err: any) => void;
 
 /**
@@ -56,10 +61,11 @@ export class ServicesClient {
   async iterateAll<T>(
     url: string,
     iteratee: ResourceIteratee<T>,
-    params?: any,
-    errorHandler?: ErrorHandler,
+    options?: IterateAllOptions,
   ): Promise<void> {
     let nextUrl: string | undefined = this.BASE_URL + url;
+
+    let params = options?.params;
 
     do {
       try {
@@ -86,7 +92,9 @@ export class ServicesClient {
       } catch (err) {
         const parsedLinkHeader = parse(err.response?.headers?.link);
         nextUrl = parsedLinkHeader?.next?.url;
-        errorHandler ? errorHandler(err) : this.defaultErrorHandling(err);
+        options?.errHandler
+          ? options?.errHandler(err)
+          : this.defaultErrorHandling(err);
       }
     } while (nextUrl);
   }
@@ -161,7 +169,7 @@ export class ServicesClient {
   ): Promise<void> {
     const url = `/organizations/${organizationId}/networks`;
 
-    await this.iterateAll(url, iteratee, { perPage: 50 });
+    await this.iterateAll(url, iteratee, { params: { perPage: 50 } });
   }
 
   /**
@@ -212,7 +220,10 @@ export class ServicesClient {
       }
     };
 
-    await this.iterateAll(url, iteratee, { perPage: 50 }, errHandler);
+    await this.iterateAll(url, iteratee, {
+      params: { perPage: 50 },
+      errHandler,
+    });
   }
 
   /**
@@ -263,7 +274,7 @@ export class ServicesClient {
       }
     };
 
-    await this.iterateAll(url, iteratee, undefined, errHandler);
+    await this.iterateAll(url, iteratee, { errHandler });
   }
 
   /**
