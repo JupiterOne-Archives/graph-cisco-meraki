@@ -245,7 +245,7 @@ export const convertDevice = (
         category: 'network',
         make: 'Cisco Meraki',
         name: data.name ?? data.networkId,
-        displayName: data.name,
+        displayName: data.name ?? data.networkId,
         hostname: data.name,
         macAddress: data.mac,
         ipAddress: data.lanIp ? data.lanIp : undefined,
