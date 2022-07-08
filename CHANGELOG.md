@@ -8,6 +8,15 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 3.1.0 - 2022-07-15
+
+### Changed
+
+- Integration now supports pagination for networks and clients.
+- Fixed a bug where a mapped relationships would be made from a VLAN entity that
+  did not exists in the graph
+- Fixed possible `undefined` device names
+
 ## 3.0.0 - 2022-05-14
 
 ### Changed
