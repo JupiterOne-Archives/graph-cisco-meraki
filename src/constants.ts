@@ -1,5 +1,9 @@
 import { RelationshipClass } from '@jupiterone/data-model';
-import { RelationshipDirection } from '@jupiterone/integration-sdk-core';
+import {
+  RelationshipDirection,
+  StepEntityMetadata,
+  StepMappedRelationshipMetadata,
+} from '@jupiterone/integration-sdk-core';
 
 export const StepIds = {
   FETCH_RESOURCES: 'fetch-resources',
@@ -13,7 +17,17 @@ export const StepIds = {
   FETCH_WIFI: 'fetch-wifi',
 };
 
-export const Entities = {
+export const Entities: Record<
+  | 'ACCOUNT'
+  | 'ORGANIZATION'
+  | 'ADMIN'
+  | 'SAML_ROLE'
+  | 'NETWORK'
+  | 'WIFI'
+  | 'VLAN'
+  | 'DEVICE',
+  StepEntityMetadata
+> = {
   ACCOUNT: {
     resourceName: 'Account',
     _type: 'cisco_meraki_account',
@@ -53,6 +67,13 @@ export const Entities = {
     resourceName: 'Device',
     _type: 'meraki_device',
     _class: ['Device', 'Host'],
+    schema: {
+      additionalProperties: true,
+      properties: {
+        name: { type: 'string' },
+      },
+      required: ['name'],
+    },
   },
 };
 
@@ -102,19 +123,17 @@ export const Relationships = {
 };
 
 export const TargetEntities = {
-  INTERNET: {
-    resourceName: 'Internet',
-    _type: 'internet',
-    _class: ['Internet', 'Network'],
-  },
   CLIENT: {
-    reourceName: 'Client',
+    resourceName: 'Client',
     _type: 'host',
     _class: ['Device', 'Host'],
   },
 };
 
-export const MappedRelationships = {
+export const MappedRelationships: Record<
+  'DEVICE_CONNECTS_INTERNET' | 'NETWORK_HAS_CLIENT' | 'VLAN_HAS_CLIENT',
+  StepMappedRelationshipMetadata
+> = {
   DEVICE_CONNECTS_INTERNET: {
     _type: 'meraki_device_connects_internet',
     sourceType: Entities.DEVICE._type,

@@ -1,4 +1,7 @@
-import { convertNetworkClientRelationship } from '../../converter';
+import {
+  convertNetworkClientRelationship,
+  convertVlanClientRelationship,
+} from '../../converter';
 // import { IntegrationConfig } from '../../types';
 
 import {
@@ -14,6 +17,7 @@ import {
 } from '../../collector';
 import { Entities, MappedRelationships, StepIds } from '../../constants';
 import { IntegrationConfig } from '../../config';
+import createEntityKey from '../../converter/utils/createEntityKey';
 
 export const clientSteps: IntegrationStep<IntegrationConfig>[] = [
   {
@@ -41,9 +45,22 @@ export async function fetchClients({
     async (networkEntity) => {
       const network = getRawData(networkEntity) as MerakiNetwork;
       await client.iterateClients(network.id, async (client: MerakiClient) => {
-        await jobState.addRelationship(
-          convertNetworkClientRelationship(network.id, client),
+        const key = createEntityKey(
+          Entities.VLAN._type,
+          network.id + ':' + client.vlan,
         );
+        // We aren't able to fetch all vlans, so the key may not exist
+        const vlanEntity = await jobState.findEntity(key);
+        if (vlanEntity) {
+          await jobState.addRelationship(
+            convertVlanClientRelationship(vlanEntity, client),
+          );
+        } else {
+          // if we can't build the relationship from the vlan, build from the network instead
+          await jobState.addRelationship(
+            convertNetworkClientRelationship(networkEntity, client),
+          );
+        }
       });
     },
   );
