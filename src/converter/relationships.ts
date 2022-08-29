@@ -20,6 +20,8 @@ export const convertNetworkClientRelationship = (
     targetFilterKeys: [['_class', 'macAddress']],
     target: {
       ...convertProperties(client),
+      _key: TargetEntities.CLIENT._type + ':' + client.id,
+      _type: TargetEntities.CLIENT._type,
       _class: TargetEntities.CLIENT._class,
       displayName: client.description || client.mac,
       macAddress: client.mac,

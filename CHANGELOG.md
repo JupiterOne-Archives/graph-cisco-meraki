@@ -8,6 +8,12 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 3.1.1 - 2022-08-29
+
+### Fixed
+
+- fixed duplicate `_key` values in `fetch-clients` step.
+
 ## 3.1.0 - 2022-07-15
 
 ### Changed
