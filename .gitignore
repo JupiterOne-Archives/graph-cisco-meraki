@@ -4,4 +4,3 @@ dist/
 .env
 .eslintcache
 tsconfig.tsbuildinfo
-old-run
