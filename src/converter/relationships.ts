@@ -10,13 +10,7 @@ import {
 import { MappedRelationships, TargetEntities } from '../constants';
 
 function createNetworkVlanHasClientKey(sourceKey: string, targetId: string) {
-  return (
-    sourceKey +
-    RelationshipClass.HAS +
-    TargetEntities.CLIENT._type +
-    ':' +
-    targetId
-  );
+  return `${sourceKey}:${RelationshipClass.HAS}:${TargetEntities.CLIENT._type}:${targetId}`;
 }
 
 export const convertNetworkClientRelationship = (
