@@ -29,8 +29,8 @@ export const convertNetworkClientRelationship = (
       displayName: client.description || client.mac,
       macAddress: client.mac,
       ipAddress: client.ip,
-      firstSeenOn: parseTimePropertyValue(client.firstSeen),
-      lastSeenOn: parseTimePropertyValue(client.lastSeen),
+      firstSeenOn: parseTimePropertyValue(client.firstSeen, 'ms'),
+      lastSeenOn: parseTimePropertyValue(client.lastSeen, 'ms'),
     },
   });
 };
@@ -51,8 +51,8 @@ export const convertVlanClientRelationship = (
       displayName: client.description || client.mac,
       macAddress: client.mac,
       ipAddress: client.ip,
-      firstSeenOn: parseTimePropertyValue(client.firstSeen),
-      lastSeenOn: parseTimePropertyValue(client.lastSeen),
+      firstSeenOn: parseTimePropertyValue(client.firstSeen, 'ms'),
+      lastSeenOn: parseTimePropertyValue(client.lastSeen, 'ms'),
     },
   });
 };
