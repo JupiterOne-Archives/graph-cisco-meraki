@@ -8,6 +8,14 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 3.2.0 - 2022-08-31
+
+### Changed
+
+- Explicitly assign `_key` value in Network/Vlan -HAS-> Client mapped
+  relationships.
+- Update `parseTimePropertyValue` to match new function signature
+
 ## 3.1.1 - 2022-08-29
 
 ### Fixed
