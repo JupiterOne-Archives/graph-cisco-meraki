@@ -1,4 +1,4 @@
-# Integration with JupiterOne
+# Cisco Meraki
 
 ## Cisco Meraki + JupiterOne Integration Benefits
 
@@ -34,7 +34,7 @@ Meraki documentation provides detailed [instructions to enable API access][1].
 
 ### In JupiterOne
 
-1. From the configuration **Gear Icon**, select **Integrations**.
+1. From the top navigation of the J1 Search homepage, select **Integrations**.
 2. Scroll to the **Cisco Meraki** integration tile and click it.
 3. Click the **Add Configuration** button and configure the following settings:
 
@@ -47,11 +47,11 @@ Meraki documentation provides detailed [instructions to enable API access][1].
   needs. You may leave this as `DISABLED` and manually execute the integration.
 - Enter the **API Key** configured for read access in Cisco Meraki.
 
-4. Click **Create Configuration** once all values are provided.
+4. Click **Create Configuration** once all values are provided. 
 
 ## How to Uninstall
 
-1. From the configuration **Gear Icon**, select **Integrations**.
+1. From the top navigation of the J1 Search homepage, select **Integrations**.
 2. Scroll to the **Cisco Meraki** integration tile and click it.
 3. Identify and click the **integration to delete**.
 4. Click the **trash can** icon.
