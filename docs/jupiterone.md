@@ -47,7 +47,7 @@ Meraki documentation provides detailed [instructions to enable API access][1].
   needs. You may leave this as `DISABLED` and manually execute the integration.
 - Enter the **API Key** configured for read access in Cisco Meraki.
 
-4. Click **Create Configuration** once all values are provided. 
+4. Click **Create Configuration** once all values are provided.
 
 ## How to Uninstall
 
