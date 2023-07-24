@@ -244,8 +244,14 @@ export const convertDevice = (
         _class: Entities.DEVICE._class,
         category: 'network',
         make: 'Cisco Meraki',
-        name: data.name ?? data.networkId,
-        displayName: data.name ?? data.networkId,
+        name:
+          data.name ??
+          data.networkId ??
+          `Unknown ${data.model ?? 'Network Device'}`,
+        displayName:
+          data.name ??
+          data.networkId ??
+          `Unknown ${data.model ?? 'Network Device'}`,
         hostname: data.name,
         macAddress: data.mac,
         ipAddress: data.lanIp ? data.lanIp : undefined,
@@ -254,6 +260,7 @@ export const convertDevice = (
         publicIp: getPublicIp(data),
         publicIpAddress: getPublicIp(data),
         deviceId: null, // data-model required property
+        lastSeenOn: parseTimePropertyValue(new Date()), // We are scanning this network for this integration run
 
         serial: data.serial,
         lat: data.lat,

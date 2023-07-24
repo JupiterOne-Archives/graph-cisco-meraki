@@ -8,6 +8,16 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 3.2.1 - 2023-07-24
+
+### Added
+
+- `lastSeenOn` to Device entities.
+
+### Changed
+
+- `name` and `displayName` to default when a `name` property is not provided.
+
 ## 3.2.0 - 2022-08-31
 
 ### Changed
