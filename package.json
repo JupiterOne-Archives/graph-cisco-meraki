@@ -2,6 +2,10 @@
   "name": "@jupiterone/graph-cisco-meraki",
   "version": "3.2.1",
   "description": "A graph conversion tool for https://meraki.cisco.com",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/JupiterOne/graph-cisco-meraki"
+  },
   "license": "MPL-2.0",
   "files": [
     "src"
